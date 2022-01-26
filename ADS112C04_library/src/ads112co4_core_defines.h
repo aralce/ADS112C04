@@ -5,7 +5,7 @@
 #define SENSOR_INIT_DELAY_MS  500
 
 //SENSOR COMANDS
-#define RESET_COMMAND       0x06
-#define READ_DATA_COMMAND   0x10
+#define COMMAND_RESET       0x06
+#define COMMAND_READ_DATA   0x10
 
 #endif
