@@ -4,24 +4,62 @@
 
 static ads112co4_handler_t *ads112co4_handler;
 
+/* ==== [Private function declaration] ====================================================== */
+static void send_command(uint8_t command, uint8_t command_mask_for_reg, uint8_t register_value);
+
+
+/* ==== [Public function definition] ======================================================== */
 void ads112co4_init(ads112co4_handler_t *sensor_handler)
 {
     ads112co4_handler = sensor_handler;
+    ads112co4_handler->config1 = 0;
     i2c_init();
     delay_ms(SENSOR_INIT_DELAY_MS);
 }
 
 void ads112co4_reset(ads112co4_handler_t *sensor_handler)
 {
-    uint8_t txBuffer[1] = {COMMAND_RESET};
-    i2c_write(ads112co4_handler->address, txBuffer, sizeof(txBuffer));
+    send_command(COMMAND_RESET, 0, 0);
 }
 
 uint16_t ads112co4_readData(ads112co4_handler_t *sensor_handler)
 {
-    uint8_t txBuffer[1] = {COMMAND_READ_DATA};
-    i2c_write(ads112co4_handler->address, txBuffer, 1);
+    send_command(COMMAND_READ_DATA, 0, 0);
     uint8_t rxBuffer[2];
-    i2c_read(ads112co4_handler->address, rxBuffer, 2);
-    return 0x0405;
+    i2c_read(ads112co4_handler->address, rxBuffer, 2);    
+    return ((rxBuffer[1] << 8) + rxBuffer[0]);
+}
+
+void ads112co4_convertionMode(ads112co4_handler_t *sensor_handler, ads112co4_conversion_mode_t mode)
+{
+    send_command(COMMAND_WRITE_REGISTER, CONFIG_REGISTER_1_CM, sensor_handler->config1 | CONVERSION_MODE_MASK);
+    send_command(COMMAND_READ_REGISTER, CONFIG_REGISTER_1_CM, 0);
+    uint8_t rxBuffer[1];
+    i2c_read(sensor_handler->address, rxBuffer, 1);
+    sensor_handler->config1 |= 0xff & CONVERSION_MODE_MASK; 
+}
+
+void ads112co4_operationMode(ads112co4_handler_t *sensor_handler, ads112co4_operation_mode_t mode)
+{
+    send_command(COMMAND_WRITE_REGISTER, OPERATION_MODE_MASK, sensor_handler->config1 | OPERATION_MODE_MASK);
+    send_command(COMMAND_READ_REGISTER, CONFIG_REGISTER_1_CM, 0);
+    uint8_t rxBuffer[1];
+    i2c_read(sensor_handler->address, rxBuffer, 1);
+}
+
+
+/* ==== [Private function definition] ===================================================== */
+static void send_command(uint8_t command, uint8_t command_mask_for_reg, uint8_t register_value)
+{
+    uint8_t private_command = command;
+    uint8_t size = 1; //by default sent only the command
+    uint8_t txBuffer[2];
+    if(command == COMMAND_READ_REGISTER || command == COMMAND_WRITE_REGISTER)
+        private_command |= command_mask_for_reg; //config register to merge with command
+    if(command == COMMAND_WRITE_REGISTER){
+        size = 2; //needs to send data for register.
+        txBuffer[1] = register_value;
+    }
+    txBuffer[0] = private_command;
+    i2c_write(ads112co4_handler->address, txBuffer, size);
 }
