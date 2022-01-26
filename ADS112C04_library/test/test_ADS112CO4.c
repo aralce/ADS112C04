@@ -1,8 +1,8 @@
 #include "unity.h"
-#include "ads112co4_suport.h"
 #include "mock_ads112co4_hal.h"
 #include "ads112co4_core.h"
 #include "ads112co4_core_defines.h"
+#include "ads112co4_suport.h"
 
 /**
  * ads112c04_api:
@@ -16,6 +16,7 @@
  * - Sensor is resetted.
  * - Sensor data is read.
  * - Conversion mode is selected. 
+ * 
  * - Operation mode is selected.
  * - Power-down mode is selected.
  * 
@@ -42,9 +43,11 @@ void test_sensor_init (void)
 //Sensor is resetted
 void test_sensor_resseted (void)
 {  
-    sensor_init(&sensor_handler);
+    i2c_init_Ignore();
+    delay_ms_Ignore();
+    ads112co4_init(&sensor_handler);
     //expect
-    uint8_t txBuffer[1] = {RESET_COMMAND};
+    uint8_t txBuffer[1] = {COMMAND_RESET};
     i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 1, 1);
     //given
     ads112co4_reset (&sensor_handler);
@@ -54,15 +57,15 @@ void test_sensor_resseted (void)
 //Sensor data is read
 void test_sensor_data_read (void)
 {
-    sensor_init (&sensor_handler);
+    i2c_init_Ignore();
+    delay_ms_Ignore();
+    ads112co4_init(&sensor_handler);
     //expect
-    uint8_t txBuffer[1] = {READ_DATA_COMMAND}
+    uint8_t txBuffer[1] = {COMMAND_READ_DATA};
     i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 1, 1);
     uint8_t rxBuffer[2];
-    rxBuffer[0] = 0x05;
-    rxBuffer[1] = 0x04; 
-    i2c_read_ExpectWithArray (sensor_handler.address, rxBuffer, 2, 2);
-    TEST_ASSERT_EQUAL_UINT16 (0x0405, ads112co4_readData());
+    i2c_read_ExpectWithArray(sensor_handler.address, rxBuffer, 2, 2);
+    TEST_ASSERT_EQUAL_UINT16 (0x0405, ads112co4_readData(&sensor_handler));
 }
 
 // ///////////////////////////////
