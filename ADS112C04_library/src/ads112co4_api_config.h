@@ -1,0 +1,6 @@
+#ifndef ADS112CO4_API_CONFIG_H_
+#define ADS112CO4_API_CONFIG_H_
+
+#define DEFAULT_SENSOR_ADDRESS      0x40
+
+#endif

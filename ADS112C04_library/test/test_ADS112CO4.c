@@ -2,25 +2,8 @@
 #include "mock_ads112co4_hal.h"
 #include "ads112co4_core.h"
 #include "ads112co4_core_defines.h"
-#include "ads112co4_suport.h"
 
-/**
- * ads112c04_api:
- * -User interface
- * 
- * ads112c04_core:
- * -Controls the ads112C04 main functionality.
- * 
- * 
- * - Sensor is init.
- * - Sensor is resetted.
- * - Sensor data is read.
- * - Conversion mode is selected. 
- * - Operation mode is selected.
- * 
- * - Power-down mode is selected.
- * 
- */
+#define NO_DATA    0
 
 ads112co4_handler_t sensor_handler;
 uint8_t txBuffer[2];
@@ -42,7 +25,22 @@ void sensor_checkRegister(uint8_t config_register_x_cm)
     i2c_read_ReturnArrayThruPtr_rxBuffer(rxBuffer, 1);
 }
 
-///////////////
+void sensor_init(ads112co4_handler_t *sensor_handler)
+{
+    i2c_init_Ignore();
+    delay_ms_Ignore();
+    ads112co4_init(sensor_handler);
+}
+
+void i2c_sendCommand(uint8_t command, uint8_t data_to_with_command)
+{
+    static uint8_t txBuffer[2];
+    txBuffer[0] = command;
+    txBuffer[1] = data_to_with_command;
+    uint8_t size = data_to_with_command == 0 ? 1 : 2;
+    i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, size, size);
+}
+
 //Sensor init
 void test_sensor_init (void)
 {
@@ -53,13 +51,23 @@ void test_sensor_init (void)
     ads112co4_init (&sensor_handler);
 }
 
-//////////////////////
+//Sensor inits with default values
+void test_sensor_init_with_default_values()
+{
+    //given
+    sensor_init(&sensor_handler);
+    //expect
+    TEST_ASSERT_EQUAL_HEX8 (DEFAULT_SENSOR_ADDRESS, sensor_handler.address);
+    TEST_ASSERT_EQUAL_HEX8 (0, sensor_handler.config0);
+    TEST_ASSERT_EQUAL_HEX8(0, sensor_handler.config1);
+    TEST_ASSERT_EQUAL_HEX8(0, sensor_handler.config2);
+    TEST_ASSERT_EQUAL_HEX8(0, sensor_handler.config3);
+}
+
 //Sensor is resetted
 void test_sensor_resset (void)
 {  
-    i2c_init_Ignore();
-    delay_ms_Ignore();
-    ads112co4_init(&sensor_handler);
+    sensor_init(&sensor_handler);
     //expect
     txBuffer[0] = COMMAND_RESET;
     i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 1, 1);
@@ -67,13 +75,10 @@ void test_sensor_resset (void)
     ads112co4_reset (&sensor_handler);
 }
 
-//////////////////////
 //Sensor data is read
 void test_sensor_data_read (void)
 {
-    i2c_init_Ignore();
-    delay_ms_Ignore();
-    ads112co4_init(&sensor_handler);
+    sensor_init(&sensor_handler);
     //expect
     txBuffer[0] = COMMAND_READ_DATA;
     i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 1, 1);
@@ -84,17 +89,12 @@ void test_sensor_data_read (void)
     TEST_ASSERT_EQUAL_HEX16(rxBuffer[0] + (rxBuffer[1] << 8), ads112co4_readData(&sensor_handler));
 }
 
-///////////////////////////////
 //Conversion mode is selected
 void test_sensor_conversion_mode_selected (void)
 {
-    i2c_init_Ignore();
-    delay_ms_Ignore();
-    ads112co4_init(&sensor_handler);
+    sensor_init(&sensor_handler);
     //expect
-    txBuffer[0] = COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM;
-    txBuffer[1] = CONVERSION_MODE_MASK;
-    i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 2, 2);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, CONVERSION_MODE_MASK);
     sensor_checkRegister(CONFIG_REGISTER_1_CM);
     //given
     ads112co4_convertionMode(&sensor_handler, CONTINUOS_CONVERSION);
@@ -102,19 +102,58 @@ void test_sensor_conversion_mode_selected (void)
     TEST_ASSERT_BITS(CONVERSION_MODE_MASK, CONVERSION_MODE_MASK, sensor_handler.config1);
 }
 
-///////////////////////////
 //Operation mode is selected
 void test_sensor_operation_mode_selected (void)
 {
-    i2c_init_Ignore();
-    delay_ms_Ignore();
-    ads112co4_init(&sensor_handler);
+    sensor_init(&sensor_handler);
     //expect
-    uint8_t txBuffer[2] = {COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, OPERATION_MODE_MASK};
-    i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 2, 2);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, OPERATION_MODE_MASK);
     sensor_checkRegister(CONFIG_REGISTER_1_CM);
     //given
     ads112co4_operationMode(&sensor_handler, NORMAL_MODE);
     //expect
     TEST_ASSERT_BITS(OPERATION_MODE_MASK, NORMAL_MODE, sensor_handler.config1);
+}
+
+//Power-down mode is selected.
+void test_sensor_power_down_mode_selected()
+{
+    sensor_init(&sensor_handler);
+    //expect
+    txBuffer[0] = COMMAND_POWER_DOWN;
+    i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 1, 1);
+    //given
+    ads112co4_powerDown(&sensor_handler);
+}
+
+//Sensor start conversion
+void test_sensor_start_conversion()
+{
+    sensor_init(&sensor_handler);
+    //expect
+    txBuffer[0] = COMMAND_START_OR_SYNC;
+    i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 1, 1);
+    //given
+    ads112co4_startConversion(&sensor_handler);
+}
+
+//The sensor address is set
+void test_sensor_address_set()
+{
+    sensor_init(&sensor_handler);
+    //given
+    ads112co4_setAddress(&sensor_handler, 0X4F);
+    //expect
+    TEST_ASSERT_EQUAL_HEX8(0X4F, sensor_handler.address);
+}
+
+//The sensor address is gotten
+void test_sensor_address_get()
+{
+    sensor_init(&sensor_handler);
+    ads112co4_setAddress(&sensor_handler, 0X4F);
+    //given
+    uint8_t address = ads112co4_getAddress(&sensor_handler);
+    //expect
+    TEST_ASSERT_EQUAL_HEX8(0X4F, address);
 }

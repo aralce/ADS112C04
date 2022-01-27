@@ -1,0 +1,24 @@
+/**
+ * ads112c04_api:
+ * -User interface
+ * 
+ * ads112c04_core:
+ * -Controls the ads112C04 main functionality.
+ * 
+ * 
+ * - Sensor is init.
+ * - Sensor inits with default values.
+ * - Sensor is resetted.
+ * - Sensor data is read.
+ * - Conversion mode is selected. 
+ * - Operation mode is selected.
+ * - Power-down mode is selected.
+ * - sensor start conversion.
+ * - The sensor addres is set
+ * - The sensor address is gotten
+ * 
+ * - 
+ *
+ *
+ *
+ */

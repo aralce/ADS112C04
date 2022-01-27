@@ -2,12 +2,16 @@
 #define ADS112CO4_CORE_
 
 #include <stdint.h>
+#include "ads112co4_api_config.h"
 
 #define ADS112CO4_TX_BUFFER_BYTES 1
 
 typedef struct{
-    uint8_t  address;
+    uint8_t address;
+    uint8_t config0;
     uint8_t config1;
+    uint8_t config2;
+    uint8_t config3;
 }ads112co4_handler_t;
 
 typedef enum{
@@ -56,4 +60,11 @@ void ads112co4_convertionMode(ads112co4_handler_t *sensor_handler, ads112co4_con
  */
 void ads112co4_operationMode(ads112co4_handler_t *sensor_handler, ads112co4_operation_mode_t mode);
 
+void ads112co4_powerDown(ads112co4_handler_t *sensor_handler);
+
+void ads112co4_startConversion(ads112co4_handler_t *sensor_handler);
+
+void ads112co4_setAddress(ads112co4_handler_t *sensor_handler, uint8_t sensor_address);
+
+uint8_t ads112co4_getAddress(ads112co4_handler_t *sensor_handler);
 #endif
