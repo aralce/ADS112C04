@@ -1,5 +1,5 @@
-#ifndef ADS112CO4_HAL_
-#define ADS112CO4_HAL_
+#ifndef ADS112C04_HAL_
+#define ADS112C04_HAL_
 #include <stdint.h>
 
 /* --Insert your user includes here-- */
@@ -10,7 +10,7 @@
 /**
  * @brief HAL function to init I2C
  *  Please, replace the inside content with the required code to init your
- *  I2C pheripheral in your hardware.
+ *  I2C peripheral in your hardware.
  * 
  *  What is it expected?
  *  -The I2C can read data and write data with underneath functions.
@@ -21,7 +21,7 @@ void i2c_init (void);
 /**
  * @brief HAL function to read data with I2C
  *  Please, replace the inside content with the required code to read data
- *  with your I2C pheriperal in your hardware.
+ *  with your I2C peripheral in your hardware.
  * 
  *  What is it expected?
  *  -The I2C read data from the address and request as many bytes as size parameter.
