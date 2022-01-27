@@ -34,18 +34,20 @@ uint16_t ads112c04_readData(ads112c04_handler_t *sensor_handler)
     return ((rxBuffer[1] << 8) + rxBuffer[0]);
 }
 
-void ads112c04_convertionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode)
+bool ads112c04_convertionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode)
 {
-    send_command(COMMAND_WRITE_REGISTER, CONFIG_REGISTER_1_CM, sensor_handler->config1 | CONVERSION_MODE_MASK);
+    uint8_t data_mask = (mode << CONVERSION_MODE_SHIFT);
+    send_command(COMMAND_WRITE_REGISTER, CONFIG_REGISTER_1_CM, sensor_handler->config1 | data_mask);
     send_command(COMMAND_READ_REGISTER, CONFIG_REGISTER_1_CM, NO_REGISTER_VALUE);
     uint8_t rxBuffer[1];
     i2c_read(sensor_handler->address, rxBuffer, 1);
-    sensor_handler->config1 |= 0xff & CONVERSION_MODE_MASK; 
+    sensor_handler->config1 |= data_mask; 
 }
 
 void ads112c04_operationMode(ads112c04_handler_t *sensor_handler, ads112c04_operation_mode_t mode)
 {
-    send_command(COMMAND_WRITE_REGISTER, OPERATION_MODE_MASK, sensor_handler->config1 | OPERATION_MODE_MASK);
+    uint8_t bit_to_modify = mode > 0 ? OPERATION_MODE_MASK : 0;
+    send_command(COMMAND_WRITE_REGISTER, CONFIG_REGISTER_1_CM, sensor_handler->config1 | bit_to_modify);
     send_command(COMMAND_READ_REGISTER, CONFIG_REGISTER_1_CM, NO_REGISTER_VALUE);
     uint8_t rxBuffer[1];
     i2c_read(sensor_handler->address, rxBuffer, 1);
@@ -69,6 +71,16 @@ void ads112c04_setAddress(ads112c04_handler_t *sensor_handler, uint8_t sensor_ad
 uint8_t ads112c04_getAddress(ads112c04_handler_t *sensor_handler)
 {
     return sensor_handler->address;
+}
+
+void ads112c04_selectRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_voltage_t ref)
+{
+    uint8_t data_mask = (ref << VOLTAGE_REFERENCE_SELECTION_SHIFT); 
+    send_command(COMMAND_WRITE_REGISTER, CONFIG_REGISTER_1_CM, sensor_handler->config1 | data_mask);
+    send_command(COMMAND_READ_REGISTER, CONFIG_REGISTER_1_CM, NO_REGISTER_VALUE);
+    uint8_t rxBuffer[1];
+    i2c_read(sensor_handler->address, rxBuffer, 1);
+    sensor_handler->config1 |= data_mask;
 }
 
 /* ==== [Private function definition] ===================================================== */

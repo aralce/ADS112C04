@@ -32,12 +32,14 @@ void sensor_init(ads112c04_handler_t *sensor_handler)
     ads112c04_init(sensor_handler);
 }
 
-void i2c_sendCommand(uint8_t command, uint8_t data_to_with_command)
+void i2c_sendCommand(uint8_t command, uint8_t data_add_with_command)
 {
     static uint8_t txBuffer[2];
     txBuffer[0] = command;
-    txBuffer[1] = data_to_with_command;
-    uint8_t size = data_to_with_command == 0 ? 1 : 2;
+    txBuffer[1] = data_add_with_command;
+    uint8_t size = 1;
+    if(COMMAND_WRITE_REGISTER == (command & 0xF0)) //Only the last 4 bits indicates the COMMAND_WRITE_REGISTER
+        size = 2;
     i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, size, size);
 }
 
@@ -64,8 +66,8 @@ void test_sensor_init_with_default_values()
     TEST_ASSERT_EQUAL_HEX8(0, sensor_handler.config3);
 }
 
-//Sensor is resetted
-void test_sensor_resset (void)
+//Sensor is reset
+void test_sensor_reset (void)
 {  
     sensor_init(&sensor_handler);
     //expect
@@ -89,12 +91,18 @@ void test_sensor_data_read (void)
     TEST_ASSERT_EQUAL_HEX16(rxBuffer[0] + (rxBuffer[1] << 8), ads112c04_readData(&sensor_handler));
 }
 
-//Conversion mode is selected
-void test_sensor_conversion_mode_selected (void)
+//Sensor change conversion mode and succeed
+void test_sensor_conversion_mode_succeed (void)
+{
+    TEST_FAIL_MESSAGE("Next test to implement");
+}
+
+//Conversion mode: Continuos mode is selected.
+void test_sensor_conversion_mode_continuos_mode_selected (void)
 {
     sensor_init(&sensor_handler);
     //expect
-    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, CONVERSION_MODE_MASK);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | 1*CONVERSION_MODE_MASK);
     sensor_checkRegister(CONFIG_REGISTER_1_CM);
     //given
     ads112c04_convertionMode(&sensor_handler, CONTINUOS_CONVERSION);
@@ -102,12 +110,26 @@ void test_sensor_conversion_mode_selected (void)
     TEST_ASSERT_BITS(CONVERSION_MODE_MASK, CONVERSION_MODE_MASK, sensor_handler.config1);
 }
 
-//Operation mode is selected
-void test_sensor_operation_mode_selected (void)
+//Conversion mode: Single-shot mode is selected
+void test_sensor_conversion_mode_singleShot_mode_selected (void)
 {
     sensor_init(&sensor_handler);
     //expect
-    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, OPERATION_MODE_MASK);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | 0*CONVERSION_MODE_MASK);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM);
+    //given
+    ads112c04_convertionMode(&sensor_handler, SINGLE_CONVERSION);
+    //expect
+    TEST_ASSERT_BITS(CONVERSION_MODE_MASK, 0, sensor_handler.config1);
+
+}
+
+//Operation mode: normal mode is selected.
+void test_sensor_operation_mode_normal_mode_selected (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | 0*OPERATION_MODE_MASK);
     sensor_checkRegister(CONFIG_REGISTER_1_CM);
     //given
     ads112c04_operationMode(&sensor_handler, NORMAL_MODE);
@@ -115,8 +137,21 @@ void test_sensor_operation_mode_selected (void)
     TEST_ASSERT_BITS(OPERATION_MODE_MASK, NORMAL_MODE, sensor_handler.config1);
 }
 
+//Operation mode: turbo mode is selected.
+void test_sensor_operation_mode_turbo_mode_selected (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | 1*OPERATION_MODE_MASK);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM);
+    //given
+    ads112c04_operationMode(&sensor_handler, TURBO_MODE);
+    //expect
+    TEST_ASSERT_BITS(OPERATION_MODE_MASK, TURBO_MODE, sensor_handler.config1);
+}
+
 //Power-down mode is selected.
-void test_sensor_power_down_mode_selected()
+void test_sensor_power_down_mode_selected (void)
 {
     sensor_init(&sensor_handler);
     //expect
@@ -126,8 +161,8 @@ void test_sensor_power_down_mode_selected()
     ads112c04_powerDown(&sensor_handler);
 }
 
-//Sensor start conversion
-void test_sensor_start_conversion()
+//Sensor start or restart conversion
+void test_sensor_start_or_restart_conversion (void)
 {
     sensor_init(&sensor_handler);
     //expect
@@ -138,7 +173,7 @@ void test_sensor_start_conversion()
 }
 
 //The sensor address is set
-void test_sensor_address_set()
+void test_sensor_address_set (void)
 {
     sensor_init(&sensor_handler);
     //given
@@ -148,7 +183,7 @@ void test_sensor_address_set()
 }
 
 //The sensor address is gotten
-void test_sensor_address_get()
+void test_sensor_address_get (void)
 {
     sensor_init(&sensor_handler);
     ads112c04_setAddress(&sensor_handler, 0X4F);
@@ -156,4 +191,18 @@ void test_sensor_address_get()
     uint8_t address = ads112c04_getAddress(&sensor_handler);
     //expect
     TEST_ASSERT_EQUAL_HEX8(0X4F, address);
+}
+
+//voltage reference: AVDD_AVSS is selected
+void test_sensor_reference_voltage_AVDD_AVSS_selected (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    uint8_t data_mask = (AVDD_AVSS << VOLTAGE_REFERENCE_SELECTION_SHIFT);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM);
+    //given
+    ads112c04_selectRefVoltage(&sensor_handler, AVDD_AVSS);
+    //expect
+    TEST_ASSERT_BITS(VOLTAGE_REFERENCE_SELECTION_MASK, data_mask, sensor_handler.config1);
 }

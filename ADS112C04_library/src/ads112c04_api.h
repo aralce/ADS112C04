@@ -2,6 +2,7 @@
 #define ADS112C04_CORE_
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "ads112c04_api_config.h"
 
 #define ADS112C04_TX_BUFFER_BYTES 1
@@ -15,12 +16,18 @@ typedef struct{
 }ads112c04_handler_t;
 
 typedef enum{
-    CONTINUOS_CONVERSION = 1 /*!< 1 : Continuous conversion mode */
+    SINGLE_CONVERSION,      /*!< 0 : Single-shot conversion mode(default) */ 
+    CONTINUOS_CONVERSION    /*!< 1 : Continuous conversion mode */
 }ads112c04_conversion_mode_t;
 
 typedef enum{
-    NORMAL_MODE  /*!< Normal mode (256-kHz modulator clock, default) */
+    NORMAL_MODE,    /*!<  0 : Normal mode (256-kHz modulator clock, default) */
+    TURBO_MODE      /*!< 1 : Turbo mode (512-kHz modulator clock) */
 }ads112c04_operation_mode_t;
+
+typedef enum{
+    AVDD_AVSS = 2
+}ads112c04_ref_voltage_t;
 
 /**
  * @brief Inits the sensor and the I2C communications.
@@ -49,8 +56,9 @@ uint16_t ads112c04_readData(ads112c04_handler_t *sensor_handler);
  * 
  * @param sensor_handler struct ads112c04_handler_t for dependency injection.
  * @param mode Normal mode(256-kHz modulator clock, default) - Turbo mode(512-kHz modulator clock) 
+ * @return bool Return true when succeed
  */
-void ads112c04_convertionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode);
+bool ads112c04_convertionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode);
 
 /**
  * @brief Change the sensor operation mode
@@ -68,7 +76,7 @@ void ads112c04_operationMode(ads112c04_handler_t *sensor_handler, ads112c04_oper
 void ads112c04_powerDown(ads112c04_handler_t *sensor_handler);
 
 /**
- * @brief Start ADC conversion.
+ * @brief Start or Restart ADC conversion.
  * 
  * @param sensor_handler struct ads112c04_handler_t for dependency injection.
  */
@@ -91,5 +99,7 @@ void ads112c04_setAddress(ads112c04_handler_t *sensor_handler, uint8_t sensor_ad
  * @return uint8_t 
  */
 uint8_t ads112c04_getAddress(ads112c04_handler_t *sensor_handler);
+
+void ads112c04_selectRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_voltage_t ref);
 
 #endif

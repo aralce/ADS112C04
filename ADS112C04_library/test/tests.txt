@@ -8,17 +8,19 @@
  * 
  * - Sensor is init.
  * - Sensor inits with default values.
- * - Sensor is resetted.
+ * - Sensor is reset.
  * - Sensor data is read.
- * - Conversion mode is selected. 
- * - Operation mode is selected.
+ * - Conversion mode: Continuos mode is selected. 
+ * - Conversion mode: Single-shot mode is selected
+ * - Operation mode: normal mode is selected.
+ * - Operation mode: turbo mode is selected.
  * - Power-down mode is selected.
  * - sensor start conversion.
- * - The sensor addres is set
+ * - The sensor address is set
  * - The sensor address is gotten
+ * - Voltage reference: AVDD_AVSS is selected.
  * 
- * - 
- *
+ * -Sensor change conversion mode and succeed
  *
  *
  */
