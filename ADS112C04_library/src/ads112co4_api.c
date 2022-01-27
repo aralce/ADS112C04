@@ -1,4 +1,4 @@
-#include "ads112co4_core.h"
+#include "ads112co4_api.h"
 #include "ads112co4_hal.h"
 #include "ads112co4_core_defines.h"
 
