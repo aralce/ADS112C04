@@ -5,22 +5,71 @@
  * ads112c04_core:
  * -Controls the ads112C04 main functionality.
  * 
- * 
+ * Implemented tests:
  * - Sensor is init.
  * - Sensor inits with default values.
  * - Sensor is reset.
+ *
  * - Sensor data is read.
+ *
+ * - Sensor change conversion mode and succeed
+ * - Sensor change conversion mode and fail
+ * - Conversion mode: invalid value is selected
  * - Conversion mode: Continuos mode is selected. 
  * - Conversion mode: Single-shot mode is selected
+ *
+ * - Sensor change operation mode and succeed
+ * - Sensor change operation mode and fail
+ * - Operation mode: invalid value is selected.
  * - Operation mode: normal mode is selected.
  * - Operation mode: turbo mode is selected.
+ *
  * - Power-down mode is selected.
+ *
  * - sensor start conversion.
+ *
  * - The sensor address is set
  * - The sensor address is gotten
+ *
+ * - Sensor Voltage reference change and succeed
+ * - Sensor Voltage reference change and fail
+ * - Voltage reference: invalid value is selected.
+ * - Voltage reference: internal reference is selected.
+ * - Voltage reference: REFP_REFN is selected.
  * - Voltage reference: AVDD_AVSS is selected.
+ *
+ * - The sensor change the data rate and succeed.
+ * - The sensor  change the data rate and fail
+ * - Data rate: invalid value is selected
+ * - Data rate:  20SPS is selected
+ * - Data rate:  45SPS is selected
+ * - Data rate:  90SPS is selected
+ * - Data rate: 175SPS is selected
+ * - Data rate: 330SPS is selected
+ * - Data rate: 600SPS is selected
+ * - Data rate: 1000SPS is selected
  * 
- * -Sensor change conversion mode and succeed
+ * 
  *
+ * Tests to implement:
+ * 
+ * 
  *
+ * - Sensor input change and succeed
+ * - Sensor input change and fail
+ * - Input: IN+ is AIN0 and IN- is AIN1 is selected
+ * - Input: IN+ is AIN0 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN0 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN0 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN2 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN3 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN0 and IN- is AVSS is selected
+ * - Input: IN+ is AIN1 and IN- is AVSS is selected
+ * - Input: IN+ is AIN2 and IN- is AVSS is selected
+ * - Input: IN+ is AIN3 and IN- is AVSS is selected
+ *
+ * - Sensor input as monitor change and succeed
+ * - Sensor input as monitor change and fail
  */
