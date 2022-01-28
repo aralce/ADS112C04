@@ -23,7 +23,7 @@ void test_sensor_conversion_mode_succeed (void)
     i2c_write_ExpectAnyArgs();
     uint8_t rx = sensor_checkRegister(CONFIG_REGISTER_1_CM, CONVERSION_MODE_MASK);
     //given
-    TEST_ASSERT_EQUAL(true, ads112c04_convertionMode(&sensor_handler, 1));
+    TEST_ASSERT_EQUAL(true, ads112c04_conversionMode(&sensor_handler, 1));
     //expect
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config1);
 }
@@ -36,7 +36,7 @@ void test_sensor_conversion_mode_fail (void)
     i2c_write_ExpectAnyArgs();
     uint8_t rx = sensor_checkRegister(CONFIG_REGISTER_1_CM, CONVERSION_MODE_MASK);
     //given
-    TEST_ASSERT_EQUAL(false, ads112c04_convertionMode(&sensor_handler, 0));
+    TEST_ASSERT_EQUAL(false, ads112c04_conversionMode(&sensor_handler, 0));
     //expect
     TEST_ASSERT_NOT_EQUAL_UINT8(rx, sensor_handler.config1);
 }
@@ -46,7 +46,7 @@ void test_sensor_conversion_mode_invalid_value_selected (void)
 {
     sensor_init(&sensor_handler);
     //expect
-    TEST_ASSERT_EQUAL(false, ads112c04_convertionMode(&sensor_handler, TOTAL_CONVERSION_MODES));
+    TEST_ASSERT_EQUAL(false, ads112c04_conversionMode(&sensor_handler, TOTAL_CONVERSION_MODES));
 }
 
 //Conversion mode: Continuos mode is selected.
@@ -57,7 +57,7 @@ void test_sensor_conversion_mode_continuos_mode_selected (void)
     i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | 1*CONVERSION_MODE_MASK);
     sensor_checkRegister(CONFIG_REGISTER_1_CM, sensor_handler.config1 | 1*CONVERSION_MODE_MASK);
     //given
-    ads112c04_convertionMode(&sensor_handler, CONTINUOS_CONVERSION);
+    ads112c04_conversionMode(&sensor_handler, CONTINUOS_CONVERSION);
     //expect
     TEST_ASSERT_BITS(CONVERSION_MODE_MASK, CONVERSION_MODE_MASK, sensor_handler.config1);
 }
@@ -70,7 +70,7 @@ void test_sensor_conversion_mode_singleShot_mode_selected (void)
     i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | 0*CONVERSION_MODE_MASK);
     sensor_checkRegister(CONFIG_REGISTER_1_CM, sensor_handler.config1 | 0*CONVERSION_MODE_MASK);
     //given
-    ads112c04_convertionMode(&sensor_handler, SINGLE_CONVERSION);
+    ads112c04_conversionMode(&sensor_handler, SINGLE_CONVERSION);
     //expect
     TEST_ASSERT_BITS(CONVERSION_MODE_MASK, 0, sensor_handler.config1);
 
