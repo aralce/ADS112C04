@@ -1,0 +1,25 @@
+
+/*
+ * Tests implemented:
+ *
+ *
+ *
+ * Tests to implement:
+ *
+ * - Sensor input change and succeed
+ * - Sensor input change and fail
+ * - Input: IN+ is AIN0 and IN- is AIN1 is selected
+ * - Input: IN+ is AIN0 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN0 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN0 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN2 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN3 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN0 and IN- is AVSS is selected
+ * - Input: IN+ is AIN1 and IN- is AVSS is selected
+ * - Input: IN+ is AIN2 and IN- is AVSS is selected
+ * - Input: IN+ is AIN3 and IN- is AVSS is selected
+ *
+ * - Sensor input as monitor change and succeed
+ * - Sensor input as monitor change and fail

@@ -1,0 +1,12 @@
+ 
+/*Implemented tests:
+ *
+ * - Sensor is init.
+ * - Sensor inits with default values.
+ * - Sensor is reset.
+ * - Sensor data is read.
+ * - Power-down mode is selected.
+ * - sensor start conversion.
+ * - The sensor address is set
+ * - The sensor address is gotten
+ */
