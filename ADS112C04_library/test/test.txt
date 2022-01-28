@@ -2,12 +2,8 @@
 /*
  * Tests implemented:
  *
- *
- *
- * Tests to implement:
- *
  * - Sensor input change and succeed
- * - Sensor input change and fail
+ * - Sensor input change and fail in change register
  * - Input: IN+ is AIN0 and IN- is AIN1 is selected
  * - Input: IN+ is AIN0 and IN- is AIN2 is selected
  * - Input: IN+ is AIN0 and IN- is AIN3 is selected
@@ -21,5 +17,11 @@
  * - Input: IN+ is AIN2 and IN- is AVSS is selected
  * - Input: IN+ is AIN3 and IN- is AVSS is selected
  *
+ *
+ * Tests to implement:
+ *
+ * - Input: invalid input combination si selected
+ * - Input: IN+ is not a valid input.
+ * - Input: IN- is not a valir input.
  * - Sensor input as monitor change and succeed
  * - Sensor input as monitor change and fail

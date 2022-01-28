@@ -45,6 +45,13 @@ typedef enum{
     TOTAL_DATA_RATES
 }ads112c04_data_rate_t;
 
+typedef enum{
+    AIN0,
+    AIN1,
+    AIN2,
+    AIN3,
+    AVSS
+}ads112c04_input_t;
 /**
  * @brief Inits the sensor and the I2C communications.
  * 
@@ -131,4 +138,6 @@ uint8_t ads112c04_getAddress(ads112c04_handler_t *sensor_handler);
 bool ads112c04_selectRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_voltage_t ref);
 
 bool ads112c04_selectDataRate(ads112c04_handler_t *sensor_handler, ads112c04_data_rate_t rate);
+
+bool ads112c04_selectInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t positive, ads112c04_input_t negative);
 #endif

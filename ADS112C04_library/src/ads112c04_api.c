@@ -4,8 +4,19 @@
 
 #define NO_MASK_TO_APPLY    0
 #define NO_REGISTER_VALUE   0
+#define INVALID_INPUT       0xFF
 
+/* ==== [Private global variables] =============================================================== */
 static ads112c04_handler_t *ads112c04_handler;
+static const uint8_t input_matrix_AINp_AINn_to_value[5][5] = 
+//        |    nAIN0     |     nAIN1     |     nAIN2    |     nAIN3    |     nAVSS    | 
+/*pAIN0*/{{ INVALID_INPUT,      0x00     ,     0x01     ,     0x02     ,     0x08     }, /*pAIN0 */  
+/*pAIN1 */{     0x03     , INVALID_INPUT ,     0x04     ,     0x05     ,     0x09     }, /*pAIN1 */
+/*pAIN2 */{INVALID_INPUT , INVALID_INPUT ,INVALID_INPUT ,     0x06     ,     0x0A     }, /*pAIN2 */
+/*pAIN3 */{INVALID_INPUT , INVALID_INPUT ,     0x07     ,INVALID_INPUT ,     0x0B     }, /*pAIN3 */
+/*pAVSS */{INVALID_INPUT , INVALID_INPUT ,INVALID_INPUT ,INVALID_INPUT ,INVALID_INPUT }};/*pAVSS */
+//ROW is POSITIVE , COLUMN is NEGATIVE// 
+//input_input_matrix_ANp_ANn_to_value[positive][negative]
 
 /* ==== [Private function declaration] ====================================================== */
 static void send_command(uint8_t command, uint8_t command_mask_for_reg, uint8_t register_value);
@@ -102,6 +113,17 @@ bool ads112c04_selectDataRate(ads112c04_handler_t *sensor_handler, ads112c04_dat
     uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
     if(rx == (sensor_handler->config1 | data_mask))
         sensor_handler->config1 = rx;
+    else
+        return false;
+    return true;
+}
+
+bool ads112c04_selectInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t positive, ads112c04_input_t negative)
+{
+    uint8_t data_mask = input_matrix_AINp_AINn_to_value[positive][negative] << INPUT_SELECTION_SHIFT;
+    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
+    if(rx == data_mask)
+        sensor_handler->config0 = rx;
     else
         return false;
     return true;
