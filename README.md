@@ -9,7 +9,7 @@ The device can perform conversions at data rates up to 2000 samples-per-second (
 ![functional_diagram_block](https://user-images.githubusercontent.com/72839552/151069685-0ab7d038-0e03-4c45-b663-1d20fb2735c6.JPG)  
  - **MUX** *(input selection)*: The input can be selected from AIN0, AIN1, AIN2, AIN3, or AVSS. The MUX output is AINp(+) and AINn(-). The AVSS can only be selected for AINn(-) for single-ended measures.  Also, a temperature sensor can be used as an input: [temperature_sensor](https://user-images.githubusercontent.com/72839552/151074039-c37bb740-a61c-4d7f-b767-b82d83fcb35c.JPG)
 
- - **PGA**: The programmable gain amplifier can be configured to amplify the incoming signal. The system also uses a switched-capacitor to set the gain. A gain of 1 represents a real gain of 1/4. [Gain description](https://user-images.githubusercontent.com/72839552/151073672-82be4148-f497-4c45-9524-05cfa7692905.JPG).  
+ - **PGA**: The programmable gain amplifier can be configured to amplify the incoming signal. The system also uses a switched-capacitor to set the gain. [Gain description](https://user-images.githubusercontent.com/72839552/151073672-82be4148-f497-4c45-9524-05cfa7692905.JPG).  
  
  - **Programmable current source** (*IDAC*): There are 2 current sources that can set a current to the AINx pins and to REFP and REFN pins. They can be use to sense RTDs (resistance temperature detector).  
 
