@@ -171,6 +171,8 @@ bool ads112c04_selectGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_
 
 bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_t status)
 {
+    if(status >= ALL_PGA_STATUS)
+        return false;
     uint8_t data_mask = status << PGA_BYPASS_SHIFT;
     uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
     if( rx != data_mask)
@@ -185,7 +187,7 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
  * 
  * @param command defined command
  * @param command_mask_for_reg Is the mask applied to the command. The commands to write and read registers need specify the register. 
- * @param register_value 
+ * @param register_value The value to write to the config value. If the command don't need this its value doesn't matter.
  */
 static void send_command(uint8_t command, uint8_t config_register_x_cm, uint8_t register_value)
 {

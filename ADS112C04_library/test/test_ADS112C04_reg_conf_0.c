@@ -530,3 +530,11 @@ void test_sensor_set_PGA_disabled (void)
     //expect
     TEST_ASSERT_BITS(PGA_BYPASS_MASK, data_mask, sensor_handler.config0);
 }
+
+//Sensor set PGA to invalid value
+void test_sensor_set_PGA_invalid (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    TEST_ASSERT_EQUAL(false, ads112c04_setPGA(&sensor_handler, 0x05));
+}

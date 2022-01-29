@@ -14,7 +14,7 @@ void ads112c04_init(ads112c04_handler_t *sensor_handler);
 
 /**
  * @brief Reset the internal configuration of the sensor to default.
- * 
+ *   A power reset on the sensor has the same effect.
  * @param sensor_handler struct ads112c04_handler_t for dependency injection.
  */
 void ads112c04_reset(ads112c04_handler_t *sensor_handler);
@@ -49,7 +49,7 @@ bool ads112c04_operationMode(ads112c04_handler_t *sensor_handler, ads112c04_oper
 
 /**
  * @brief Set the sensor in low power mode.
- * 
+ *   In low power mode the sensor is not taking measures.
  * @param sensor_handler struct ads112c04_handler_t for dependency injection.
  */
 void ads112c04_powerDown(ads112c04_handler_t *sensor_handler);
@@ -104,18 +104,67 @@ bool ads112c04_selectDataRate(ads112c04_handler_t *sensor_handler, ads112c04_dat
  * @brief Select the positive and negative input for conversion.
  *   The AVSS voltage can be selected as the negative input to do single-ended conversions.
  * @param sensor_handler struct ads112c04_handler_t for dependency injection. 
- * @param positive Input to connect to the positive side on ADC
- * @param negative Input to connect to the negative side on ADC
- * @return true  
- * @return false 
+ * @param positive Input to connect to the positive side on ADC. (default) AIN0
+ * @param negative Input to connect to the negative side on ADC (default) AIN1
+ * @return true The inputs changed.
+ * @return false The inputs didn't changed because inputs are invalid or the data was not written to sensor.
+ */
+/*Table of valid combinations: 
+ *|         |    nAIN0     |     nAIN1     |     nAIN2    |     nAIN3    |     nAVSS    | 
+ *|=========|==============|===============|==============|==============|==============|
+ *|  pAIN0  |INVALID_INPUT |     VALID     |     VALID    |     VALID    |     VALID    | 
+ *|  pAIN1  |    VALID     | INVALID_INPUT |     VALID    |     VALID    |     VALID    |
+ *|  pAIN2  |INVALID_INPUT | INVALID_INPUT |INVALID_INPUT |     VALID    |     VALID    | 
+ *|  pAIN3  |INVALID_INPUT | INVALID_INPUT |     VALID    |INVALID_INPUT |     VALID    |
+ *|  pAVSS  |INVALID_INPUT | INVALID_INPUT |INVALID_INPUT |INVALID_INPUT |INVALID_INPUT |
+ *
+ * + Prefix p for positive input.
+ * + Prefix n for negative input.
+ * + The default input is pAIN0/nAIN1 
  */
 bool ads112c04_selectInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t positive, ads112c04_input_t negative);
 
+/**
+ * @brief The sensor changes its inputs to measure one of the external reference voltages.
+ * 
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection. 
+ * @param mode Select beetwen (REFp-REFn)/4 and (AVDD-AVSS)/4 voltage.
+ * @return true The inputs changed.
+ * @return false The inputs didn't change because the mode is invalid or the data was not written to sensor. 
+ */
 bool ads112c04_enterMonitorMode(ads112c04_handler_t *sensor_handler, ads112c04_monitor_mode_t mode);
 
+/**
+ * @brief The sensor changes its inputs to measure the value (AVDD + AVSS) / 2  
+ *  The internal multiplexer offers the option to short both PGA inputs to mid-supply (AVDD+AVSS)/2.
+ *  This option can be used to measure and calibrate the device offset voltage by storing the result of the
+ *  shorted input voltage reading and consequently subtracting the result from each following reading. 
+ *  Take multiple readings with the inputs shorted and average the result to reduce the effect of noise.
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection.  
+ * @return true The inputs were changed to (AVDD+AVSS)/2
+ * @return false The inputs didn't change because the data was not written to sensor.
+ */
 bool ads112c04_setCalibrationMode(ads112c04_handler_t *sensor_handler);
 
+/**
+ * @brief Select the ADC gain
+ *  The PGA is always enabled for gain settings 8 to 128, regardless of the PGA_BYPASS set by setPGA function.
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection.  
+ * @param gain Gain from 1 to 128.  
+ * @return true The ADC gain changed successfully.
+ * @return false The ADC gain didn't changed because gain is invalid or the data was not written to sensor.
+ */
 bool ads112c04_selectGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_gain_t gain);
 
+/**
+ * @brief Enable or disable the Programmable Gain Amplifier.
+ *   If the PGA is active the sensor comsumption is greater.
+ *   Selecting a gain from 8 to 128 automatically enables the PGA.
+ * 
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection.   
+ * @param status PGA_ENABLED(default) of PGA_DISABLED
+ * @return true The PGA status changed successfully. 
+ * @return false The PGA status didn't change because the status is invalid or the data was not written to sensor.
+ */
 bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_t status);
 #endif

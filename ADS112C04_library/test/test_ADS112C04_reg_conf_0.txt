@@ -45,10 +45,7 @@
  * - Sensor set PGA and fails
  * - Sensor set PGA to PGA enabled
  * - Sensor set PGA to PGA disabled
+ * - Sensor set PGA to invalid value
  *
  *
- * Tests to implement:
- * 
- *
- *
- *
+ */
