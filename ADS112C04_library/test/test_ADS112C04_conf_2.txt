@@ -6,26 +6,17 @@
  * - The sensor query if data is ready and data is not ready
  *
  * - The sensor set the current for IDAC1_IDAC2 and succeed
+ * - The sensor set the current for IDAC1_IDAC2 and fails
  * - Source current:    0uA is selected.
  * - Source current:   10uA is selected.
- *
- *
- *
- *
- *
- *
- * Tests to implement:
- *
  * - Source current:   50uA is selected.
  * - Source current:  100uA is selected.
  * - Source current:  250uA is selected.
  * - Source current:  500uA is selected.
  * - Source current: 1000uA is selected.
  * - Source current: 1500uA is selected.
- * - The sensor set the current for IDAC1_IDAC2 and fails
  * - Source current: invalid current is selected.
  *
- * - The sensor shutdown both source current and succeed
- * - The sensor shutdown both source current and fails.
+ *
  *
  */

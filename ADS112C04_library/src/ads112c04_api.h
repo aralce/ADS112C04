@@ -171,4 +171,7 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
 bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler);
 
 bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current_t value);
+
+bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_current_source_t source, ads112c04_current_output_t output);
+
 #endif

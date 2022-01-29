@@ -18,9 +18,10 @@
 #define COMMAND_START_OR_SYNC   0x08
 
 //CONFIG REGISTERS TO MERGE WITH REGISTER COMMANDS:  |register_address|bit no matters|bit no matters|
-#define CONFIG_REGISTER_0_CM    0x00  //  00xx
-#define CONFIG_REGISTER_1_CM    0x04  //  01xx
-#define CONFIG_REGISTER_2_CM    0x08  //  10xx
+#define CONFIG_REGISTER_0_CM    0x00  // xxxx 00xx
+#define CONFIG_REGISTER_1_CM    0x04  // xxxx 01xx
+#define CONFIG_REGISTER_2_CM    0x08  // xxxx 10xx
+#define CONFIG_REGISTER_3_CM    0x0C  // xxxx 11xx
 
 //CONFIG0 REGISTER
 #define PGA_BYPASS_BITS         BITS_1
@@ -54,5 +55,14 @@
 #define CURRENT_VALUE_BITS      BITS_3
 #define CURRENT_VALUE_SHIFT     0
 #define CURRENT_VALUE_MASK      (CURRENT_VALUE_BITS << CURRENT_VALUE_SHIFT)
+
+//CONFIG3 REGISTER
+#define IDAC_1_OUTPUT_BITS      BITS_3
+#define IDAC_1_OUTPUT_SHIFT     5
+#define IDAC_1_OUTPUT_MASK      (IDAC_1_OUTPUT_BITS << IDAC_1_OUTPUT_SHIFT)
+
+#define IDAC_2_OUTPUT_BITS      BITS_3
+#define IDAC_2_OUTPUT_SHIFT     2
+#define IDAC_2_OUTPUT_MASK      (IDAC_2_OUTPUT_BITS << IDAC_2_OUTPUT_SHIFT)
 
 #endif

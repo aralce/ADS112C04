@@ -4,16 +4,15 @@
 #include "ads112c04_core_defines.h"
 
 ads112c04_handler_t sensor_handler;
-uint8_t txBuffer[2];
 
-void sensor_init(ads112c04_handler_t *sensor_handler)
+static void sensor_init(ads112c04_handler_t *sensor_handler)
 {
     i2c_init_Ignore();
     delay_ms_Ignore();
     ads112c04_init(sensor_handler);
 }
 
-void i2c_sendCommand(uint8_t command, uint8_t data_add_with_command)
+static void i2c_sendCommand(uint8_t command, uint8_t data_add_with_command)
 {
     static uint8_t txBuffer[2];
     txBuffer[0] = command;
@@ -24,7 +23,7 @@ void i2c_sendCommand(uint8_t command, uint8_t data_add_with_command)
     i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, size, size);
 }
 
-uint8_t sensor_checkRegister(uint8_t config_register_x_cm, uint8_t expected_return_value)
+static uint8_t sensor_checkRegister(uint8_t config_register_x_cm, uint8_t expected_return_value)
 {
     static uint8_t txBuffer[1]; 
     txBuffer[0] = COMMAND_READ_REGISTER | config_register_x_cm; //CONFIG REGISTERS TO MERGE WITH REGISTER COMMANDS
@@ -36,15 +35,9 @@ uint8_t sensor_checkRegister(uint8_t config_register_x_cm, uint8_t expected_retu
     return rxBuffer[0];
 }
 
-void setup (void){
-    sensor_init(&sensor_handler);
-}
+void setup (void){}
 
-void teardown (void)
-{
-    txBuffer[0] = 0;
-    txBuffer[1] = 0;
-}
+void teardown (void){}
 
 //Sensor input change and succeed
 void test_sensor_input_succeed (void)

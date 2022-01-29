@@ -19,6 +19,7 @@ void ads112c04_init(ads112c04_handler_t *sensor_handler)
     sensor_handler->config0 = 0;
     sensor_handler->config1 = 0;
     sensor_handler->config2 = 0;
+    sensor_handler->config3 = 0;
     i2c_init();
     delay_ms(SENSOR_INIT_DELAY_MS);
 }
@@ -192,7 +193,8 @@ bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler)
 bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current_t value)
 {
     uint8_t current_index = 0;
-    static const uint8_t array_of_currents[] = {CURRENT_0_uA, CURRENT_10_uA};
+    static const uint16_t array_of_currents[] = { CURRENT_0_uA  , CURRENT_10_uA , CURRENT_50_uA  , CURRENT_100_uA,
+                                                  CURRENT_250_uA, CURRENT_500_uA, CURRENT_1000_uA, CURRENT_1500_uA};
     for( ; current_index<=countof(array_of_currents); ++current_index){ //extract index
         if(current_index == countof(array_of_currents) || value == array_of_currents[current_index]) //if first condition is true second is not evaluated
             break;
@@ -201,7 +203,25 @@ bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current
         return false;
     uint8_t data_mask = current_index << CURRENT_VALUE_SHIFT;
     uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_2_CM, data_mask);
+    if(rx != data_mask)
+        return false;
     sensor_handler->config2 = rx;
+    return true;
+}
+
+bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_current_source_t source, ads112c04_current_output_t output)
+{
+    if(source >= TOTAL_CURRENT_SOURCES || output >= TOTAL_CURRENT_OUTPUTS)
+        return false;
+    uint8_t data_mask = output;
+    if(source == IDAC1)
+        data_mask <<= IDAC_1_OUTPUT_SHIFT; 
+    else
+        data_mask <<= IDAC_2_OUTPUT_SHIFT;
+    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_3_CM, data_mask);
+    if(rx != data_mask)
+        return false;
+    sensor_handler->config3 = data_mask;
     return true;
 }
 

@@ -3,12 +3,10 @@
 #include "ads112c04_api.h"
 #include "ads112c04_core_defines.h"
 
-#define NO_DATA    0
-
 ads112c04_handler_t sensor_handler;
 uint8_t txBuffer[2];
 
-void sensor_init(ads112c04_handler_t *sensor_handler)
+static void sensor_init(ads112c04_handler_t *sensor_handler)
 {
     i2c_init_Ignore();
     delay_ms_Ignore();

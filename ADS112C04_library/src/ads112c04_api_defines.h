@@ -73,7 +73,29 @@ typedef enum{
 
 typedef enum{
     CURRENT_0_uA,
-    CURRENT_10_uA = 10
+    CURRENT_10_uA   =   10,
+    CURRENT_50_uA   =   50,
+    CURRENT_100_uA  =  100,
+    CURRENT_250_uA  =  250,
+    CURRENT_500_uA  =  500,
+    CURRENT_1000_uA = 1000,
+    CURRENT_1500_uA = 1500
 }ads112c04_current_t;
 
+typedef enum{
+    IDAC1,
+    IDAC2,
+    TOTAL_CURRENT_SOURCES
+}ads112c04_current_source_t;
+
+typedef enum{
+    CURRENT_DISABLED,
+    CURRENT_TO_AIN0,
+    CURRENT_TO_AIN1,
+    CURRENT_TO_AIN2,
+    CURRENT_TO_AIN3,
+    CURRENT_TO_REFP,
+    CURRENT_TO_REFN,
+    TOTAL_CURRENT_OUTPUTS
+}ads112c04_current_output_t;
 #endif
