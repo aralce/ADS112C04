@@ -167,4 +167,8 @@ bool ads112c04_selectGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_
  * @return false The PGA status didn't change because the status is invalid or the data was not written to sensor.
  */
 bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_t status);
+
+bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler);
+
+bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current_t value);
 #endif

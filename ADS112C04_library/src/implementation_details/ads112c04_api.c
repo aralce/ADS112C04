@@ -8,34 +8,31 @@
 #define NO_REGISTER_VALUE   0
 #define INVALID_INPUT       0xFF
 
-/* ==== [Private global variables] =============================================================== */
-static ads112c04_handler_t *ads112c04_handler;
-
 /* ==== [Private function declaration] ====================================================== */
-static void send_command(uint8_t command, uint8_t config_register_x_cm, uint8_t register_value);
+static void send_command(ads112c04_handler_t *sensor_handler, uint8_t command, uint8_t config_register_x_cm, uint8_t register_value);
 static uint8_t change_config_reg_and_check(ads112c04_handler_t *sensor_handler, uint8_t config_register_x_cm, uint8_t register_value);
 
 /* ==== [Public function definition] ======================================================== */
 void ads112c04_init(ads112c04_handler_t *sensor_handler) 
 {
-    ads112c04_handler = sensor_handler;
-    ads112c04_handler->address = DEFAULT_SENSOR_ADDRESS;
-    ads112c04_handler->config0 = 0;
-    ads112c04_handler->config1 = 0;
+    sensor_handler->address = DEFAULT_SENSOR_ADDRESS;
+    sensor_handler->config0 = 0;
+    sensor_handler->config1 = 0;
+    sensor_handler->config2 = 0;
     i2c_init();
     delay_ms(SENSOR_INIT_DELAY_MS);
 }
 
 void ads112c04_reset(ads112c04_handler_t *sensor_handler)
 {
-    send_command(COMMAND_RESET, NO_MASK, NO_REGISTER_VALUE);
+    send_command(sensor_handler, COMMAND_RESET, NO_MASK, NO_REGISTER_VALUE);
 }
 
 uint16_t ads112c04_readData(ads112c04_handler_t *sensor_handler)
 {
-    send_command(COMMAND_READ_DATA, NO_MASK, NO_REGISTER_VALUE);
+    send_command(sensor_handler, COMMAND_READ_DATA, NO_MASK, NO_REGISTER_VALUE);
     uint8_t rxBuffer[2];
-    i2c_read(ads112c04_handler->address, rxBuffer, 2);    
+    i2c_read(sensor_handler->address, rxBuffer, 2);    
     return ((rxBuffer[1] << 8) + rxBuffer[0]);
 }
 
@@ -65,12 +62,12 @@ bool ads112c04_operationMode(ads112c04_handler_t *sensor_handler, ads112c04_oper
 
 void ads112c04_powerDown(ads112c04_handler_t *sensor_handler)
 {
-    send_command(COMMAND_POWER_DOWN, NO_MASK, NO_REGISTER_VALUE);
+    send_command(sensor_handler, COMMAND_POWER_DOWN, NO_MASK, NO_REGISTER_VALUE);
 }
 
 void ads112c04_startConversion(ads112c04_handler_t *sensor_handler)
 {
-    send_command(COMMAND_START_OR_SYNC, NO_MASK, NO_REGISTER_VALUE);  
+    send_command(sensor_handler, COMMAND_START_OR_SYNC, NO_MASK, NO_REGISTER_VALUE);  
 }
 
 void ads112c04_setAddress(ads112c04_handler_t *sensor_handler, uint8_t sensor_address)
@@ -181,6 +178,33 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
     return true;
 }
 
+bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler)
+{
+   uint8_t txBuffer[1] = {COMMAND_READ_REGISTER | CONFIG_REGISTER_2_CM};
+   i2c_write(sensor_handler->address, txBuffer, 1);
+   uint8_t rxBuffer[1];
+   i2c_read(sensor_handler->address, rxBuffer, 1);
+   if(rxBuffer[0] == 0)
+    return false;
+   return true; 
+}
+
+bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current_t value)
+{
+    uint8_t current_index = 0;
+    static const uint8_t array_of_currents[] = {CURRENT_0_uA, CURRENT_10_uA};
+    for( ; current_index<=countof(array_of_currents); ++current_index){ //extract index
+        if(current_index == countof(array_of_currents) || value == array_of_currents[current_index]) //if first condition is true second is not evaluated
+            break;
+    }
+    if(current_index == countof(array_of_currents)) //invalid value
+        return false;
+    uint8_t data_mask = current_index << CURRENT_VALUE_SHIFT;
+    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_2_CM, data_mask);
+    sensor_handler->config2 = rx;
+    return true;
+}
+
 /* ==== [Private function definition] ===================================================== */
 /**
  * @brief Send the selected command by I2C
@@ -189,7 +213,7 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
  * @param command_mask_for_reg Is the mask applied to the command. The commands to write and read registers need specify the register. 
  * @param register_value The value to write to the config value. If the command don't need this its value doesn't matter.
  */
-static void send_command(uint8_t command, uint8_t config_register_x_cm, uint8_t register_value)
+static void send_command(ads112c04_handler_t *sensor_handler, uint8_t command, uint8_t config_register_x_cm, uint8_t register_value)
 {
     uint8_t private_command = command;
     uint8_t size = 1; //by default sent only the command
@@ -201,7 +225,7 @@ static void send_command(uint8_t command, uint8_t config_register_x_cm, uint8_t 
         txBuffer[1] = register_value;
     }
     txBuffer[0] = private_command;
-    i2c_write(ads112c04_handler->address, txBuffer, size);
+    i2c_write(sensor_handler->address, txBuffer, size);
 }
 
 /**
@@ -214,8 +238,8 @@ static void send_command(uint8_t command, uint8_t config_register_x_cm, uint8_t 
  */
 static uint8_t change_config_reg_and_check(ads112c04_handler_t *sensor_handler, uint8_t config_register_x_cm, uint8_t register_value)
 {
-    send_command(COMMAND_WRITE_REGISTER, config_register_x_cm, register_value);
-    send_command(COMMAND_READ_REGISTER, config_register_x_cm, NO_REGISTER_VALUE);
+    send_command(sensor_handler, COMMAND_WRITE_REGISTER, config_register_x_cm, register_value);
+    send_command(sensor_handler, COMMAND_READ_REGISTER, config_register_x_cm, NO_REGISTER_VALUE);
     uint8_t rxBuffer[1];
     i2c_read(sensor_handler->address, rxBuffer, 1);
     return rxBuffer[0];

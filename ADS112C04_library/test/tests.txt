@@ -2,8 +2,12 @@
  * Implemented tests:
  *
  *
+ * - The sensor query if data is ready and data is ready
+ * - The sensor query if data is ready and data is not ready
  *
- *
+ * - The sensor set the current for IDAC1_IDAC2 and succeed
+ * - Source current:    0uA is selected.
+ * - Source current:   10uA is selected.
  *
  *
  *
@@ -12,16 +16,12 @@
  *
  * Tests to implement:
  *
- * - The sensor query if data is ready
- * 
- * - The sensor set the current for IDAC1_IDAC2 and succeed
- * - Source current:   10uA is selected.
  * - Source current:   50uA is selected.
  * - Source current:  100uA is selected.
  * - Source current:  250uA is selected.
  * - Source current:  500uA is selected.
- * - Source current: 1000us is selected.
- * - Source current: 1500us is selected.
+ * - Source current: 1000uA is selected.
+ * - Source current: 1500uA is selected.
  * - The sensor set the current for IDAC1_IDAC2 and fails
  * - Source current: invalid current is selected.
  *

@@ -71,4 +71,9 @@ typedef enum{
     ALL_PGA_STATUS
 }ads112c04_PGA_status_t;
 
+typedef enum{
+    CURRENT_0_uA,
+    CURRENT_10_uA = 10
+}ads112c04_current_t;
+
 #endif
