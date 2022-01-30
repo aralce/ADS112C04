@@ -2,18 +2,21 @@
  * Implemented tests:
  *
  * - Sensor change conversion mode and succeed
+ * - Sensor change conversion mode and keeps other configurations on config register 1
  * - Sensor change conversion mode and fail
  * - Conversion mode: invalid value is selected
  * - Conversion mode: Continuos mode is selected. 
  * - Conversion mode: Single-shot mode is selected
  *
  * - Sensor change operation mode and succeed
+ * - Sensor change operation mode and keeps other configurations on config register 1
  * - Sensor change operation mode and fail
  * - Operation mode: invalid value is selected.
  * - Operation mode: normal mode is selected.
  * - Operation mode: turbo mode is selected.
  *
  * - Sensor Voltage reference change and succeed
+ * - Sensor Voltage reference change and keeps other configurations on config register 1
  * - Sensor Voltage reference change and fail
  * - Voltage reference: invalid value is selected.
  * - Voltage reference: internal reference is selected.
@@ -21,6 +24,7 @@
  * - Voltage reference: AVDD_AVSS is selected.
  *
  * - The sensor change the data rate and succeed.
+ * - The sensor change the data rate and keeps other configurations on config register 1
  * - The sensor  change the data rate and fail
  * - Data rate: invalid value is selected
  * - Data rate:  20SPS is selected

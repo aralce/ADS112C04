@@ -52,6 +52,21 @@ void test_sensor_conversion_mode_succeed (void)
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config1);
 }
 
+//Sensor change conversion mode and keeps other configurations on config register 1
+void test_sensor_conversion_mode_keep_other_config (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config1 = 0xFF;
+    //expect
+    uint8_t data_mask = (sensor_handler.config1 & (~CONVERSION_MODE_MASK));
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    ads112c04_conversionMode(&sensor_handler, 0x00);
+    //expect
+    TEST_ASSERT_EQUAL(data_mask, sensor_handler.config1);     
+}
+
 //Sensor change conversion mode and fail
 void test_sensor_conversion_mode_fail (void)
 {
@@ -113,6 +128,21 @@ void test_sensor_operation_mode_succeed (void)
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config1);    
 }
 
+//Sensor change operation mode and keeps other configurations on config register 1
+void test_sensor_operation_mode_keep_other_config (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config1 = 0xFF;
+    //expect
+    uint8_t data_mask = (sensor_handler.config1 & (~OPERATION_MODE_MASK));
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    ads112c04_operationMode(&sensor_handler, 0x00);
+    //expect
+    TEST_ASSERT_EQUAL(data_mask, sensor_handler.config1);    
+}
+
 //Sensor change operation mode and fail
 void test_sensor_operation_mode_fail (void)
 {
@@ -172,6 +202,21 @@ void test_sensor_reference_voltage_succeed (void)
     TEST_ASSERT_EQUAL(true, ads112c04_selectRefVoltage(&sensor_handler, 0x02));
     //expect
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config1); 
+}
+
+//Sensor Voltage reference change and keeps other configurations on config register 1
+void test_sensor_reference_voltage_keep_other_config (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config1 = 0xFF;
+    //expect
+    uint8_t data_mask = (sensor_handler.config1 & (~VOLTAGE_REFERENCE_SELECTION_MASK));
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    ads112c04_selectRefVoltage(&sensor_handler, 0x00);
+    //expect
+    TEST_ASSERT_EQUAL(data_mask, sensor_handler.config1);         
 }
 
 //Sensor Voltage reference change and fail
@@ -252,6 +297,21 @@ void test_sensor_data_rate_succeed (void)
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config1); 
 }
 
+//The sensor change the data rate and keeps other configurations on config register 1
+void test_sensor_data_rate_keep_other_configs (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config1 = 0xFF;
+    //expect
+    uint8_t data_mask = (sensor_handler.config1 & (~DATA_RATE_SELECTION_MASK)) | (SPS_20 << DATA_RATE_SELECTION_SHIFT);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    ads112c04_selectDataRate(&sensor_handler, SPS_20);
+    //expect
+    TEST_ASSERT_EQUAL(data_mask, sensor_handler.config1);      
+}
+
 //The sensor  change the data rate and fail
 void test_sensor_data_rate_fail (void)
 {
@@ -283,7 +343,7 @@ void test_sensor_data_rate_20_SPS_selected (void)
     i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, sensor_handler.config1 | data_mask);
     sensor_checkRegister(CONFIG_REGISTER_1_CM, sensor_handler.config1 | data_mask);
     //given
-    ads112c04_selectRefVoltage(&sensor_handler, SPS_20);
+    ads112c04_selectDataRate(&sensor_handler, SPS_20);
     //expect
     TEST_ASSERT_BITS(DATA_RATE_SELECTION_MASK, data_mask, sensor_handler.config1);      
 }

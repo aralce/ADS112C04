@@ -75,6 +75,21 @@ void test_sensor_set_current_IDAC1_IDAC2_succeed (void)
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config2);
 }
 
+//The sensor set the current for IDAC1_IDAC2 and keeps other configurations on config register 2
+void test_sensor_set_current_IDAC1_IDAC2_keep_other_config (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config2 = 0xFF;
+    //expect
+    uint8_t data_mask = (0x00 << CURRENT_VALUE_SHIFT) | (sensor_handler.config2 &(~CURRENT_VALUE_MASK));
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_2_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_2_CM, data_mask);
+    //given
+    ads112c04_setCurrent(&sensor_handler, CURRENT_0_uA);
+    //expect
+    TEST_ASSERT_EQUAL( data_mask, sensor_handler.config2);      
+}
+
 //The sensor set the current for IDAC1_IDAC2 and fails
 void test_sensor_set_current_IDAC1_IDAC2_fail (void)
 {

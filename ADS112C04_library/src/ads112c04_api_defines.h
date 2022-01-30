@@ -98,4 +98,5 @@ typedef enum{
     CURRENT_TO_REFN,
     TOTAL_CURRENT_OUTPUTS
 }ads112c04_current_output_t;
+
 #endif

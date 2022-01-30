@@ -55,6 +55,25 @@ void test_sensor_reset (void)
     ads112c04_reset (&sensor_handler);
 }
 
+//Sensor is reset and config change to default values
+void test_sensor_reset_to_default_values (void)
+{
+    sensor_init(&sensor_handler);
+    i2c_read_Ignore();
+    i2c_write_Ignore();
+    //given
+    sensor_handler.config0 = 0xFF;
+    sensor_handler.config1 = 0xFF;
+    sensor_handler.config2 = 0xFF;
+    sensor_handler.config3 = 0xFF;
+    ads112c04_reset(&sensor_handler);
+    //expect
+    TEST_ASSERT_EQUAL(0, sensor_handler.config0);
+    TEST_ASSERT_EQUAL(0, sensor_handler.config1);
+    TEST_ASSERT_EQUAL(0, sensor_handler.config2);
+    TEST_ASSERT_EQUAL(0, sensor_handler.config3);
+}
+
 //Sensor data is read
 void test_sensor_data_read (void)
 {

@@ -54,6 +54,21 @@ void test_sensor_current_source_output_IDAC1_succeed (void)
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config3);    
 }
 
+//The sensor change current source output IDAC1 and keeps other configurations on config register 3
+void test_sensor_current_source_output_IDAC1_keep_other_config (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config3 = 0xFF;
+    //expect
+    uint8_t data_mask = (0x00 << IDAC_1_OUTPUT_SHIFT) | (sensor_handler.config3 &(~IDAC_1_OUTPUT_MASK));
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_3_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_3_CM, data_mask);
+    //given
+    ads112c04_setCurrentOutput(&sensor_handler, IDAC1, CURRENT_DISABLED);
+    //expect
+    TEST_ASSERT_EQUAL(data_mask, sensor_handler.config3);  
+}
+
 //The sensor change current source output IDAC1 and fail
 void test_sensor_current_source_output_IDAC1_fail (void)
 {
@@ -80,6 +95,21 @@ void test_sensor_current_source_output_IDAC2_succeed (void)
     TEST_ASSERT_EQUAL(true, ads112c04_setCurrentOutput(&sensor_handler, IDAC2, 0x02));
     //expect
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config3);    
+}
+
+//The sensor change current source output IDAC2 and keeps other configurations on config register 3
+void test_sensor_current_source_output_IDAC2_keep_other_config (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config3 = 0xFF;
+    //expect
+    uint8_t data_mask = (0x00 << IDAC_2_OUTPUT_SHIFT) | (sensor_handler.config3 &(~IDAC_2_OUTPUT_MASK));
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_3_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_3_CM, data_mask);
+    //given
+    ads112c04_setCurrentOutput(&sensor_handler, IDAC2, CURRENT_DISABLED);
+    //expect
+    TEST_ASSERT_BITS(IDAC_2_OUTPUT_MASK, data_mask, sensor_handler.config3);         
 }
 
 //The sensor change current source output IDAC1 and fail

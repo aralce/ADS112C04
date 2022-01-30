@@ -4,9 +4,11 @@
  * - Sensor is init.
  * - Sensor inits with default values.
  * - Sensor is reset.
+ * - Sensor is reset and config change to default values
  * - Sensor data is read.
  * - Power-down mode is selected.
  * - sensor start conversion.
  * - The sensor address is set
  * - The sensor address is gotten
+ *
  */

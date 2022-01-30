@@ -2,8 +2,10 @@
  * Implemented tests:
  *
  * - The sensor change current source output IDAC1 and succeed
+ * - The sensor change current source output IDAC1 and keeps other configurations on config register 3
  * - The sensor change current source output IDAC1 and fail
  * - The sensor change current source output IDAC2 and succeed
+ * - The sensor change current source output IDAC2 and keeps other configurations on config register 3
  * - The sensor change current source output IDAC1 and fail
  * 
  * - Current source output: IDAC1 disabled
@@ -26,6 +28,5 @@
  * - Current source output: Output invalid
  * - Current source output: current source invalid
  *
- * Test to implement:
  *
  */

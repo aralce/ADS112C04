@@ -53,6 +53,21 @@ void test_sensor_input_succeed (void)
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config0); 
 }
 
+//Sensor input change and keeps other configurations on config register 0
+void test_sensor_input_keep_other_configs (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config0 = 0xFF;
+    //expect
+    i2c_write_ExpectAnyArgs();
+    uint8_t data_mask = sensor_handler.config0 & (~INPUT_SELECTION_MASK); // AINp = AIN0 and ANn = AIN
+    sensor_checkRegister(CONFIG_REGISTER_0_CM, data_mask);
+    //given
+    TEST_ASSERT_EQUAL(true, ads112c04_selectInputs(&sensor_handler, AIN0, AIN1));
+    //expect
+    TEST_ASSERT_EQUAL_HEX8( data_mask, sensor_handler.config0);     
+}
+
 //Sensor input change and fail in change register
 void test_sensor_input_fail_change_register (void)
 {
@@ -273,6 +288,22 @@ void test_sensor_enter_monitor_mode_succeed (void)
     TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config0);     
 }
 
+//Sensor enters in monitor mode change and keeps other configurations on config register 0
+void test_sensor_enter_monitor_mode_and_keep_other_configs (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config0 = 0xFF;
+    //expect
+    i2c_write_ExpectAnyArgs();
+    uint8_t data_mask = sensor_handler.config0 & (~INPUT_SELECTION_MASK);
+    data_mask |= MONITOR_VREFP_VREFN << INPUT_SELECTION_SHIFT;
+    sensor_checkRegister(CONFIG_REGISTER_0_CM, data_mask);
+    //given
+    TEST_ASSERT_EQUAL(true, ads112c04_enterMonitorMode(&sensor_handler, MONITOR_VREFP_VREFN));
+    //expect
+    TEST_ASSERT_EQUAL_HEX8( data_mask, sensor_handler.config0);      
+}
+
 //Sensor enters in monitor mode change and fails
 void test_sensor_enter_monitor_mode_fails (void)
 {
@@ -337,6 +368,22 @@ void test_sensor_set_calibration_mode_succeed()
     TEST_ASSERT_BITS(INPUT_SELECTION_MASK, data_mask, sensor_handler.config0);
 }
 
+//Sensor sets calibration mode and keeps other configurations on config register 0
+void test_sensor_set_calibration_mode_and_keep_other_configs (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config0 = 0xFF;
+    //expect
+    i2c_write_ExpectAnyArgs();
+    uint8_t data_mask = sensor_handler.config0 & (~INPUT_SELECTION_MASK);
+    data_mask |= 0x0E << INPUT_SELECTION_SHIFT; //introduce the value for calibration mode.
+    sensor_checkRegister(CONFIG_REGISTER_0_CM, data_mask);
+    //given
+    TEST_ASSERT_EQUAL(true, ads112c04_setCalibrationMode(&sensor_handler));
+    //expect
+    TEST_ASSERT_EQUAL_HEX8( data_mask, sensor_handler.config0);     
+}
+
 //Sensor sets calibration mode and fails
 void test_sensor_set_calibration_mode_fail()
 {
@@ -363,6 +410,21 @@ void test_sensor_gain_succeed (void)
     TEST_ASSERT_EQUAL(true, ads112c04_selectGain(&sensor_handler, SENSOR_GAIN_1));
     //expect
     TEST_ASSERT_BITS(GAIN_SELECTION_MASK, data_mask, sensor_handler.config0);
+}
+
+//Sensor change gain and keeps other configurations on config register 0
+void test_sensor_gain_change_and_keep_other_configs (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config0 = 0xFF;
+    //expect
+    i2c_write_ExpectAnyArgs();
+    uint8_t data_mask = sensor_handler.config0 & (~GAIN_SELECTION_MASK); //set gain selection to reg value 0x00 -> gain 1
+    sensor_checkRegister(CONFIG_REGISTER_0_CM, data_mask);
+    //given
+    TEST_ASSERT_EQUAL(true, ads112c04_selectGain(&sensor_handler, SENSOR_GAIN_1));
+    //expect
+    TEST_ASSERT_EQUAL_HEX8( data_mask, sensor_handler.config0);     
 }
 
 //Sensor change gain and fails.
@@ -511,6 +573,21 @@ void test_sensor_set_PGA_succeed (void)
     TEST_ASSERT_EQUAL(true, ads112c04_setPGA(&sensor_handler, 1));
     //expect
     TEST_ASSERT_BITS( PGA_BYPASS_MASK, PGA_BYPASS_MASK, sensor_handler.config0);
+}
+
+//Sensor set PGA and keeps other configurations on config register 0
+void test_sensor_set_PGA_and_keep_other_configs (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config0 = 0xFF;
+    //expect
+    i2c_write_ExpectAnyArgs();
+    uint8_t data_mask = sensor_handler.config0 & (~PGA_BYPASS_MASK);
+    sensor_checkRegister(CONFIG_REGISTER_0_CM, data_mask);
+    //given
+    TEST_ASSERT_EQUAL(true, ads112c04_setPGA(&sensor_handler, 0));
+    //expect
+    TEST_ASSERT_EQUAL_HEX8( 0xFF & (~PGA_BYPASS_MASK), sensor_handler.config0);    
 }
 
 //Sensor set PGA and fails

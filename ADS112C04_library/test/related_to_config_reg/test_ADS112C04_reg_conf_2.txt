@@ -6,6 +6,7 @@
  * - The sensor query if data is ready and data is not ready
  *
  * - The sensor set the current for IDAC1_IDAC2 and succeed
+ * - The sensor set the current for IDAC1_IDAC2 and keeps other configurations on config register 2
  * - The sensor set the current for IDAC1_IDAC2 and fails
  * - Source current:    0uA is selected.
  * - Source current:   10uA is selected.
@@ -16,7 +17,6 @@
  * - Source current: 1000uA is selected.
  * - Source current: 1500uA is selected.
  * - Source current: invalid current is selected.
- *
  *
  *
  */
