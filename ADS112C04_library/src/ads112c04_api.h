@@ -168,10 +168,37 @@ bool ads112c04_selectGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_
  */
 bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_t status);
 
+/**
+ * @brief Ask to the sensor if the ADC measure is ready.
+ *   
+ * 
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection.    
+ * @return true Data is ready
+ * @return false Data is not ready
+ */
 bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler);
 
+/**
+ * @brief The the current of both current sources.
+ * 
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection.     
+ * @param value current desired.
+ * @return true the sensor changed the current.
+ * @return false the sensor didn't change the current because value is not valid or the data was not written to sensor.
+ */
 bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current_t value);
 
+
+/**
+ * @brief Set the current output to one of the entries, REFp or REFn
+ *   Both current sources can be output to the same place.
+ * 
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection.     
+ * @param source current source
+ * @param output pin to output the current source
+ * @return true the selected current source changed its output.
+ * @return false the selected current source didn't change its output because the parameters are invalid or the data was not written to sensor.
+ */
 bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_current_source_t source, ads112c04_current_output_t output);
 
 #endif
