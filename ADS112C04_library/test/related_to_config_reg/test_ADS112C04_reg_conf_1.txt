@@ -35,4 +35,13 @@
  * - Data rate: 600SPS is selected
  * - Data rate: 1000SPS is selected
  * 
+ *
+ * - The sensor select the temperature sensor mode and succeed
+ * - The sensor select the temperature sensor mode and fails
+ * - The sensor select the temperature sensor mode and keeps other configurations on config register 1
+ * - Temperature sensor mode: temperature sensor disabled
+ * - Temperature sensor mode: temperature sensor enabled
+ * - Temperature sensor mode: value is invalid
+ *
+ *
  */

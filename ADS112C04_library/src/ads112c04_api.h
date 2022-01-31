@@ -201,4 +201,6 @@ bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current
  */
 bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_current_source_t source, ads112c04_current_output_t output);
 
+bool ads112c04_setTemperatureSensor(ads112c04_handler_t *sensor_handler, ads112c04_temperature_sensor_state_t state);
+
 #endif

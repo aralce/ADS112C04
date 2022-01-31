@@ -16,6 +16,8 @@ void main(void)
     ads112c04_setCurrentOutput(&sensor_handler, IDAC1, AIN2); //set IDAC1 for output on AIN2
     ads112c04_setCurrentOutput(&sensor_handler, IDAC2, AIN3); //set IDAC2 for output on AIN3
 
+    ads112c04_setCurrent(&sensor_handler, CURRENT_500_uA);
+
     //At this point we can change conversion mode to continuos conversion. For the porpose of the example will change the mode.
     ads112c04_setConversionMode(&sensor_handler, CONTINUOS_CONVERSION);
 

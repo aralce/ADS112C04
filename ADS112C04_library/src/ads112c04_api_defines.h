@@ -99,4 +99,10 @@ typedef enum{
     TOTAL_CURRENT_OUTPUTS
 }ads112c04_current_output_t;
 
+typedef enum{
+    TEMPERATURE_SENSOR_DISABLED,
+    TEMPERATURE_SENSOR_ENABLED,
+    TOTAL_TEMPERATURE_SENSOR_STATES
+}ads112c04_temperature_sensor_state_t;
+
 #endif

@@ -186,6 +186,14 @@ bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_c
     return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_3_CM, data_mask);
 }
 
+bool ads112c04_setTemperatureSensor(ads112c04_handler_t *sensor_handler, ads112c04_temperature_sensor_state_t state)
+{
+    if(state >= TOTAL_TEMPERATURE_SENSOR_STATES)
+        return false;
+    uint8_t data_mask = (state << TEMPERATURE_SENSOR_SELECTION_SHIFT) | (sensor_handler->config1 &(~TEMPERATURE_SENSOR_SELECTION_MASK));
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
+}
+
 /* ==== [Private function definition] ===================================================== */
 /**
  * @brief Send the selected command by I2C
