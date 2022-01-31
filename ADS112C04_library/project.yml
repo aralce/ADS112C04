@@ -36,7 +36,7 @@
   :source:
     - src/**
   :support:
-    - test/support
+    - test/support/**
   :libraries: []
 
 :defines:
@@ -56,9 +56,12 @@
   :when_no_prototypes: :warn
   :enforce_strict_ordering: TRUE
   :plugins:
-    - :array
     - :ignore
-    - :callback
+    - :array
+    - :expect_any_args
+    - :return_thru_ptr
+    - :ignore_arg     
+
   :treat_as:
     uint8:    HEX8
     uint16:   HEX16

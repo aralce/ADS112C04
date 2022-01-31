@@ -1,0 +1,32 @@
+/*
+ * Implemented tests:
+ *
+ * - The sensor change current source output IDAC1 and succeed
+ * - The sensor change current source output IDAC1 and keeps other configurations on config register 3
+ * - The sensor change current source output IDAC1 and fail
+ * - The sensor change current source output IDAC2 and succeed
+ * - The sensor change current source output IDAC2 and keeps other configurations on config register 3
+ * - The sensor change current source output IDAC1 and fail
+ * 
+ * - Current source output: IDAC1 disabled
+ * - Current source output: IDAC1 connected to AIN0
+ * - Current source output: IDAC1 connected to AIN1
+ * - Current source output: IDAC1 connected to AIN2
+ * - Current source output: IDAC1 connected to AIN3
+ * - Current source output: IDAC1 connected to REFP
+ * - Current source output: IDAC1 connected to REFN
+ *
+ *
+ * - Current source output: IDAC2 disabled
+ * - Current source output: IDAC2 connected to AIN0
+ * - Current source output: IDAC2 connected to AIN1
+ * - Current source output: IDAC2 connected to AIN2
+ * - Current source output: IDAC2 connected to AIN3
+ * - Current source output: IDAC2 connected to REFP
+ * - Current source output: IDAC2 connected to REFN
+ *
+ * - Current source output: Output invalid
+ * - Current source output: current source invalid
+ *
+ *
+ */

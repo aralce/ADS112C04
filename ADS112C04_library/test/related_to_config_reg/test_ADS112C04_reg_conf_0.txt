@@ -1,0 +1,57 @@
+
+/*
+ * Tests implemented:
+ *
+ * - Sensor input change and succeed
+ * - Sensor input change and keeps other configurations on config register 0
+ * - Sensor input change and fail in change register
+ * - Input: IN+ is AIN0 and IN- is AIN1 is selected
+ * - Input: IN+ is AIN0 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN0 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN0 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN1 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN2 and IN- is AIN3 is selected
+ * - Input: IN+ is AIN3 and IN- is AIN2 is selected
+ * - Input: IN+ is AIN0 and IN- is AVSS is selected
+ * - Input: IN+ is AIN1 and IN- is AVSS is selected
+ * - Input: IN+ is AIN2 and IN- is AVSS is selected
+ * - Input: IN+ is AIN3 and IN- is AVSS is selected
+ * - Input: invalid input combination si selected, then function fails
+ * - Input: IN+ is not a valid input.
+ * - Input: IN- is not a valid input.
+ *
+ * - Sensor enters in monitor mode change and succeed
+ * - Sensor enters in monitor mode change and keeps other configurations on config register 0
+ * - Sensor enters in monitor mode change and fails
+ * - Monitor mode: monitor VREFP_VREFN
+ * - Monitor mode: monitor AVDD_AVSS
+ * - Monitor mode: monitor value is invalid
+ *
+ * - Sensor sets calibration mode and succeed
+ * - Sensor sets calibration mode and keeps other configurations on config register 0
+ * - Sensor sets calibration mode and fails
+ *
+ * - Sensor change gain and succeed
+ * - Sensor change gain and keeps other configurations on config register 0
+ * - Sensor change gain and fails.
+ * - Sensor change gain to 1
+ * - Sensor change gain to 2
+ * - Sensor change gain to 4
+ * - Sensor change gain to 8
+ * - Sensor change gain to 16
+ * - Sensor change gain to 32
+ * - Sensor change gain to 64
+ * - Sensor change gain to 128
+ * - Sensor change gain to invalid value
+ *
+ * - Sensor set PGA and succeed
+ * - Sensor set PGA and keeps other configurations on config register 0
+ * - Sensor set PGA and fails
+ * - Sensor set PGA to PGA enabled
+ * - Sensor set PGA to PGA disabled
+ * - Sensor set PGA to invalid value
+ *
+ *
+ * to implement:
+ */
