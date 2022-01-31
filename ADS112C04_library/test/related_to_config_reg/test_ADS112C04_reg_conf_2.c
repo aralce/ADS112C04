@@ -9,6 +9,7 @@ static void sensor_init(ads112c04_handler_t *sensor_handler)
 {
     i2c_init_Ignore();
     delay_ms_Ignore();
+    i2c_write_ExpectAnyArgs();
     ads112c04_init(sensor_handler);
 }
 

@@ -10,6 +10,7 @@ static void sensor_init(ads112c04_handler_t *sensor_handler)
 {
     i2c_init_Ignore();
     delay_ms_Ignore();
+    i2c_write_ExpectAnyArgs();
     ads112c04_init(sensor_handler);
 }
 
@@ -24,6 +25,7 @@ void teardown (void)
 //Sensor init
 void test_sensor_init (void)
 {
+    i2c_write_Ignore();
     //expect
     i2c_init_Expect ();
     delay_ms_Expect (SENSOR_INIT_DELAY_MS);
@@ -35,6 +37,10 @@ void test_sensor_init (void)
 void test_sensor_init_with_default_values()
 {
     //given
+    sensor_handler.config0 = 0xFF;
+    sensor_handler.config1 = 0xFF;
+    sensor_handler.config2 = 0xFF;
+    sensor_handler.config3 = 0xFF;
     sensor_init(&sensor_handler);
     //expect
     TEST_ASSERT_EQUAL_HEX8 (DEFAULT_SENSOR_ADDRESS, sensor_handler.address);
@@ -42,6 +48,18 @@ void test_sensor_init_with_default_values()
     TEST_ASSERT_EQUAL_HEX8(0, sensor_handler.config1);
     TEST_ASSERT_EQUAL_HEX8(0, sensor_handler.config2);
     TEST_ASSERT_EQUAL_HEX8(0, sensor_handler.config3);
+}
+
+//When sensor is init the sensor is restarted.
+void test_sensor_init_sensor_restarted (void)
+{
+    i2c_init_Ignore();
+    delay_ms_Ignore();
+    //expect
+    txBuffer[0] = COMMAND_RESET;
+    i2c_write_ExpectWithArray (sensor_handler.address, txBuffer, 1, 1);
+    //given
+    ads112c04_init(&sensor_handler);
 }
 
 //Sensor is reset

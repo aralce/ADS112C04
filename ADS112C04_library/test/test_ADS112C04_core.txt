@@ -3,6 +3,7 @@
  *
  * - Sensor is init.
  * - Sensor inits with default values.
+ * - When sensor is init the sensor is restarted.
  * - Sensor is reset.
  * - Sensor is reset and config change to default values
  * - Sensor data is read.

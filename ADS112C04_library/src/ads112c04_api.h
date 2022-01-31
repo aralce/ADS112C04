@@ -35,7 +35,7 @@ uint16_t ads112c04_readData(ads112c04_handler_t *sensor_handler);
  * @return true The function succeed.
  * @return false The conversion mode is not changed because the mode is invalid or the data was not written to sensor.
  */
-bool ads112c04_conversionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode);
+bool ads112c04_setConversionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode);
 
 /**
  * @brief Change the sensor operation mode
@@ -45,7 +45,7 @@ bool ads112c04_conversionMode(ads112c04_handler_t *sensor_handler, ads112c04_con
  * @return true The function succeed.
  * @return false The operation mode is not changed because the mode is invalid or the data was not written to sensor.
  */
-bool ads112c04_operationMode(ads112c04_handler_t *sensor_handler, ads112c04_operation_mode_t mode);
+bool ads112c04_setOperationMode(ads112c04_handler_t *sensor_handler, ads112c04_operation_mode_t mode);
 
 /**
  * @brief Set the sensor in low power mode.
@@ -88,7 +88,7 @@ uint8_t ads112c04_getAddress(ads112c04_handler_t *sensor_handler);
  * @return true The function succeed.
  * @return false The reference voltage is not changed beacause ref is invalid or the data was not written to sensor.
  */
-bool ads112c04_selectRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_voltage_t ref);
+bool ads112c04_setRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_voltage_t ref);
 
 /**
  * @brief Change the ADC data rate conversion in samples per second.
@@ -98,7 +98,7 @@ bool ads112c04_selectRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_r
  * @return true The data rate is changed
  * @return false The data rate is not changed because data rate is invalid or the data was not written to sensor.
  */
-bool ads112c04_selectDataRate(ads112c04_handler_t *sensor_handler, ads112c04_data_rate_t rate);
+bool ads112c04_setDataRate(ads112c04_handler_t *sensor_handler, ads112c04_data_rate_t rate);
 
 /**
  * @brief Select the positive and negative input for conversion.
@@ -122,7 +122,7 @@ bool ads112c04_selectDataRate(ads112c04_handler_t *sensor_handler, ads112c04_dat
  * + Prefix n for negative input.
  * + The default input is pAIN0/nAIN1 
  */
-bool ads112c04_selectInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t positive, ads112c04_input_t negative);
+bool ads112c04_setInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t positive, ads112c04_input_t negative);
 
 /**
  * @brief The sensor changes its inputs to measure one of the external reference voltages.
@@ -132,7 +132,7 @@ bool ads112c04_selectInputs(ads112c04_handler_t *sensor_handler, ads112c04_input
  * @return true The inputs changed.
  * @return false The inputs didn't change because the mode is invalid or the data was not written to sensor. 
  */
-bool ads112c04_enterMonitorMode(ads112c04_handler_t *sensor_handler, ads112c04_monitor_mode_t mode);
+bool ads112c04_setMonitorMode(ads112c04_handler_t *sensor_handler, ads112c04_monitor_mode_t mode);
 
 /**
  * @brief The sensor changes its inputs to measure the value (AVDD + AVSS) / 2  
@@ -154,7 +154,7 @@ bool ads112c04_setCalibrationMode(ads112c04_handler_t *sensor_handler);
  * @return true The ADC gain changed successfully.
  * @return false The ADC gain didn't changed because gain is invalid or the data was not written to sensor.
  */
-bool ads112c04_selectGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_gain_t gain);
+bool ads112c04_setGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_gain_t gain);
 
 /**
  * @brief Enable or disable the Programmable Gain Amplifier.

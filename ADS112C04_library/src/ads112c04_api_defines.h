@@ -72,7 +72,7 @@ typedef enum{
 }ads112c04_PGA_status_t;
 
 typedef enum{
-    CURRENT_0_uA,
+    CURRENT_0_uA,           /*<! (default) */
     CURRENT_10_uA   =   10,
     CURRENT_50_uA   =   50,
     CURRENT_100_uA  =  100,
@@ -89,7 +89,7 @@ typedef enum{
 }ads112c04_current_source_t;
 
 typedef enum{
-    CURRENT_DISABLED,
+    CURRENT_DISABLED,       /*<! (default) */
     CURRENT_TO_AIN0,
     CURRENT_TO_AIN1,
     CURRENT_TO_AIN2,

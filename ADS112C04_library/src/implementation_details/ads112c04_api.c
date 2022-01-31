@@ -1,5 +1,5 @@
-#include "ads112c04_api.h"
-#include "ads112c04_hal.h"
+#include "../ads112c04_api.h"
+#include "../ads112c04_hal.h"
 #include "ads112c04_core_defines.h"
 
 #define countof(x) sizeof(x)/sizeof(x[0])
@@ -17,15 +17,18 @@ static void reset_config_registers(ads112c04_handler_t *sensor_handler);
 void ads112c04_init(ads112c04_handler_t *sensor_handler) 
 {
     sensor_handler->address = DEFAULT_SENSOR_ADDRESS;
-    reset_config_registers(sensor_handler);
     i2c_init();
     delay_ms(SENSOR_INIT_DELAY_MS);
+    ads112c04_reset(sensor_handler);
 }
 
 void ads112c04_reset(ads112c04_handler_t *sensor_handler)
 {
     send_command(sensor_handler, COMMAND_RESET, NO_MASK, NO_REGISTER_VALUE);
-    reset_config_registers(sensor_handler);
+    sensor_handler->config0 = 0;
+    sensor_handler->config1 = 0;
+    sensor_handler->config2 = 0;
+    sensor_handler->config3 = 0;
 }
 
 uint16_t ads112c04_readData(ads112c04_handler_t *sensor_handler)
@@ -36,7 +39,7 @@ uint16_t ads112c04_readData(ads112c04_handler_t *sensor_handler)
     return ((rxBuffer[1] << 8) + rxBuffer[0]);
 }
 
-bool ads112c04_conversionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode)
+bool ads112c04_setConversionMode(ads112c04_handler_t *sensor_handler, ads112c04_conversion_mode_t mode)
 {
     if(mode >= TOTAL_CONVERSION_MODES)
         return false;
@@ -48,7 +51,7 @@ bool ads112c04_conversionMode(ads112c04_handler_t *sensor_handler, ads112c04_con
     return true;
 }
 
-bool ads112c04_operationMode(ads112c04_handler_t *sensor_handler, ads112c04_operation_mode_t mode)
+bool ads112c04_setOperationMode(ads112c04_handler_t *sensor_handler, ads112c04_operation_mode_t mode)
 {
     if(mode >= TOTAL_OPERATION_MODES)
         return false;
@@ -80,7 +83,7 @@ uint8_t ads112c04_getAddress(ads112c04_handler_t *sensor_handler)
     return sensor_handler->address;
 }
 
-bool ads112c04_selectRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_voltage_t ref)
+bool ads112c04_setRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_voltage_t ref)
 {
     if(ref >= TOTAL_REFERENCE_VOLTAGES)
         return false;
@@ -92,7 +95,7 @@ bool ads112c04_selectRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_r
     return true;
 }
 
-bool ads112c04_selectDataRate(ads112c04_handler_t *sensor_handler, ads112c04_data_rate_t rate)
+bool ads112c04_setDataRate(ads112c04_handler_t *sensor_handler, ads112c04_data_rate_t rate)
 {
     if(rate >= TOTAL_DATA_RATES)
         return false;
@@ -111,7 +114,7 @@ static const uint8_t input_matrix_AINp_AINn_to_value[5][5] =  //ROW is POSITIVE 
 /*pAIN2 */{INVALID_INPUT , INVALID_INPUT ,INVALID_INPUT ,     0x06     ,     0x0A     }, /*pAIN2 */
 /*pAIN3 */{INVALID_INPUT , INVALID_INPUT ,     0x07     ,INVALID_INPUT ,     0x0B     }, /*pAIN3 */
 /*pAVSS */{INVALID_INPUT , INVALID_INPUT ,INVALID_INPUT ,INVALID_INPUT ,INVALID_INPUT }};/*pAVSS */
-bool ads112c04_selectInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t positive, ads112c04_input_t negative)
+bool ads112c04_setInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t positive, ads112c04_input_t negative)
 {
     if(positive >= TOTAL_INPUTS || negative >= TOTAL_INPUTS)
         return false;
@@ -126,7 +129,7 @@ bool ads112c04_selectInputs(ads112c04_handler_t *sensor_handler, ads112c04_input
     return true;
 }
 
-bool ads112c04_enterMonitorMode(ads112c04_handler_t *sensor_handler, ads112c04_monitor_mode_t mode)
+bool ads112c04_setMonitorMode(ads112c04_handler_t *sensor_handler, ads112c04_monitor_mode_t mode)
 {
     if( mode != MONITOR_VREFP_VREFN && mode != MONITOR_AVDD_AVSS)
         return false;
@@ -148,7 +151,7 @@ bool ads112c04_setCalibrationMode(ads112c04_handler_t *sensor_handler)
     return true;
 }
 
-bool ads112c04_selectGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_gain_t gain)
+bool ads112c04_setGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_gain_t gain)
 {
     uint8_t gain_index = 0;
     static const uint8_t array_of_gains[] = { SENSOR_GAIN_1 , SENSOR_GAIN_2 , SENSOR_GAIN_4 , SENSOR_GAIN_8,
@@ -264,12 +267,4 @@ static uint8_t change_config_reg_and_check(ads112c04_handler_t *sensor_handler, 
     uint8_t rxBuffer[1];
     i2c_read(sensor_handler->address, rxBuffer, 1);
     return rxBuffer[0];
-}
-
-static void reset_config_registers(ads112c04_handler_t *sensor_handler)
-{
-    sensor_handler->config0 = 0;
-    sensor_handler->config1 = 0;
-    sensor_handler->config2 = 0;
-    sensor_handler->config3 = 0;
 }
