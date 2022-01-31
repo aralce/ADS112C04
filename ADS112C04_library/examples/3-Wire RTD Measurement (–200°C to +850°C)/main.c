@@ -9,15 +9,17 @@ void main(void)
     ads112c04_handler_t sensor_handler; //creates the sensor struct
     ads112c04_init(&sensor_handler); //inits sensor
 
+    ads112c04_setGain(&sensor_handler, SENSOR_GAIN_8); //set the PGA gain to 8
+
+    ads112c04_setRefVoltage(&sensor_handler, REFP_REFN); //set the voltage reference as external.
+
     ads112c04_setCurrentOutput(&sensor_handler, IDAC1, AIN2); //set IDAC1 for output on AIN2
     ads112c04_setCurrentOutput(&sensor_handler, IDAC2, AIN3); //set IDAC2 for output on AIN3
-    
+
     //At this point we can change conversion mode to continuos conversion. For the porpose of the example will change the mode.
     ads112c04_setConversionMode(&sensor_handler, CONTINUOS_CONVERSION);
 
-    ads112c04_startConversion(&sensor_handler);
-
-    
+    ads112c04_startConversion(&sensor_handler);   
     while(1){
         //To know when the data is ready we can set an interrupt or read on pin ~(DRDY) of the chip or just query it to the sensor. 
         if ( ads112c04_checkDataReady(&sensor_handler) ){
