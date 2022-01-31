@@ -66,8 +66,8 @@ typedef enum{
 }ads112c04_sensor_gain_t;
 
 typedef enum{
-    PGA_ENABLED,    /*<! 0 : (default) Programmmable Gain Amplifier enabled */
-    PGA_DISABLED,   /*<! 1 : The PGA is always enabled for gain settings 8 to 128, reggardless of this setting */
+    PGA_ENABLED,            /*<! 0 : (default) Programmmable Gain Amplifier enabled */
+    PGA_DISABLED,           /*<! 1 : The PGA is always enabled for gain settings 8 to 128, reggardless of this setting */
     ALL_PGA_STATUS
 }ads112c04_PGA_status_t;
 
@@ -98,5 +98,11 @@ typedef enum{
     CURRENT_TO_REFN,
     TOTAL_CURRENT_OUTPUTS
 }ads112c04_current_output_t;
+
+typedef enum{
+    TEMPERATURE_SENSOR_DISABLED,    /*<! (default) */    
+    TEMPERATURE_SENSOR_ENABLED,
+    TOTAL_TEMPERATURE_SENSOR_STATES
+}ads112c04_temperature_sensor_state_t;
 
 #endif

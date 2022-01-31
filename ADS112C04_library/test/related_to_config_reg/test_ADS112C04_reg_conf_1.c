@@ -432,3 +432,84 @@ void test_sensor_data_rate_1000_SPS_selected (void)
     //expect
     TEST_ASSERT_BITS(DATA_RATE_SELECTION_MASK, data_mask, sensor_handler.config1);      
 }
+
+//The sensor select the temperature sensor mode and succeed
+void test_sensor_temperature_sensor_mode_succeed (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    i2c_write_ExpectAnyArgs();
+    uint8_t data_mask = (0x01 << TEMPERATURE_SENSOR_SELECTION_SHIFT) & TEMPERATURE_SENSOR_SELECTION_MASK;
+    uint8_t rx = sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    TEST_ASSERT_EQUAL(true, ads112c04_setTemperatureSensor(&sensor_handler, 0x01));
+    //expect
+    TEST_ASSERT_EQUAL_HEX8(rx, sensor_handler.config1);     
+}
+
+//The sensor select the temperature sensor mode and fails
+void test_sensor_temperature_sensor_mode_fail (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    i2c_write_ExpectAnyArgs();
+    uint8_t data_mask = (0x01 << TEMPERATURE_SENSOR_SELECTION_SHIFT) & TEMPERATURE_SENSOR_SELECTION_MASK;
+    uint8_t rx = sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    TEST_ASSERT_EQUAL(false, ads112c04_setTemperatureSensor(&sensor_handler, 0x00));
+    //expect
+    TEST_ASSERT_NOT_EQUAL_HEX8(rx, sensor_handler.config1);  
+}
+
+//The sensor select the temperature sensor mode and keeps other configurations on config register 1
+void test_sensor_temperature_sensor_keep_other_configs (void)
+{
+    sensor_init(&sensor_handler);
+    sensor_handler.config1 = 0xFF;
+    //expect
+    uint8_t data_mask = (sensor_handler.config1 & (~TEMPERATURE_SENSOR_SELECTION_MASK));
+    data_mask |= (TEMPERATURE_SENSOR_DISABLED << TEMPERATURE_SENSOR_SELECTION_SHIFT);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    ads112c04_setTemperatureSensor(&sensor_handler, TEMPERATURE_SENSOR_DISABLED);
+    //expect
+    TEST_ASSERT_EQUAL(data_mask, sensor_handler.config1);      
+}
+
+//Temperature sensor mode: temperature sensor disabled
+void test_sensor_temperature_sensor_mode_disabled (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    uint8_t data_mask = (TEMPERATURE_SENSOR_DISABLED << TEMPERATURE_SENSOR_SELECTION_SHIFT);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    ads112c04_setTemperatureSensor(&sensor_handler, TEMPERATURE_SENSOR_DISABLED);
+    //expect
+    TEST_ASSERT_BITS(TEMPERATURE_SENSOR_SELECTION_MASK, data_mask, sensor_handler.config1);      
+}
+
+//Temperature sensor mode: temperature sensor enabled
+void test_sensor_temperature_sensor_mode_enabled (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    uint8_t data_mask = (TEMPERATURE_SENSOR_ENABLED << TEMPERATURE_SENSOR_SELECTION_SHIFT);
+    i2c_sendCommand(COMMAND_WRITE_REGISTER | CONFIG_REGISTER_1_CM, data_mask);
+    sensor_checkRegister(CONFIG_REGISTER_1_CM, data_mask);
+    //given
+    ads112c04_setTemperatureSensor(&sensor_handler, TEMPERATURE_SENSOR_ENABLED);
+    //expect
+    TEST_ASSERT_BITS(TEMPERATURE_SENSOR_SELECTION_MASK, data_mask, sensor_handler.config1);
+}
+
+//Temperature sensor mode: value is invalid
+void test_sensor_temperature_sensor_mode_invalid (void)
+{
+    sensor_init(&sensor_handler);
+    //expect
+    TEST_ASSERT_EQUAL(false, ads112c04_setTemperatureSensor(&sensor_handler, TOTAL_TEMPERATURE_SENSOR_STATES));
+
+}

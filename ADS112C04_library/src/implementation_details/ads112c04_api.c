@@ -147,7 +147,7 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
     return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
 }
 
-bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler)
+bool ads112c04_isDataReady(ads112c04_handler_t *sensor_handler)
 {
    uint8_t txBuffer[1] = {COMMAND_READ_REGISTER | CONFIG_REGISTER_2_CM};
    i2c_write(sensor_handler->address, txBuffer, 1);
@@ -184,6 +184,14 @@ bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_c
         data_mask = (output << IDAC_2_OUTPUT_SHIFT) | (sensor_handler->config3 &(~IDAC_2_OUTPUT_MASK));
     
     return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_3_CM, data_mask);
+}
+
+bool ads112c04_setTemperatureSensor(ads112c04_handler_t *sensor_handler, ads112c04_temperature_sensor_state_t state)
+{
+    if(state >= TOTAL_TEMPERATURE_SENSOR_STATES)
+        return false;
+    uint8_t data_mask = (state << TEMPERATURE_SENSOR_SELECTION_SHIFT) | (sensor_handler->config1 &(~TEMPERATURE_SENSOR_SELECTION_MASK));
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
 }
 
 /* ==== [Private function definition] ===================================================== */

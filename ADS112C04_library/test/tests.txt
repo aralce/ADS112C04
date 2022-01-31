@@ -1,0 +1,14 @@
+ 
+/*Implemented tests:
+ * - Only the first 14bits MSB are used.
+ * - The raw value 0x1000 is  128 degrees
+ * - The raw value 0x0001 is  0.03125 degrees
+ * - The raw value 0x0FFF is  127.96875 
+ * - The raw value 0x3FF8 is -0.25
+ *
+ *
+ * 
+ * Tests to implement:
+ *
+ * 
+ */
