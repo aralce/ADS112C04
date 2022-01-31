@@ -7,10 +7,11 @@
 #define NO_MASK             0
 #define NO_REGISTER_VALUE   0
 #define INVALID_INPUT       0xFF
+#define CM_TO_NUM           2
 
 /* ==== [Private function declaration] ====================================================== */
 static void send_command(ads112c04_handler_t *sensor_handler, uint8_t command, uint8_t config_register_x_cm, uint8_t register_value);
-static uint8_t change_config_reg_and_check(ads112c04_handler_t *sensor_handler, uint8_t config_register_x_cm, uint8_t register_value);
+static bool change_config_reg_and_check(ads112c04_handler_t *sensor_handler, uint8_t config_register_x_cm, uint8_t register_value);
 static void reset_config_registers(ads112c04_handler_t *sensor_handler);
 
 /* ==== [Public function definition] ======================================================== */
@@ -44,11 +45,7 @@ bool ads112c04_setConversionMode(ads112c04_handler_t *sensor_handler, ads112c04_
     if(mode >= TOTAL_CONVERSION_MODES)
         return false;
     uint8_t data_mask = (mode << CONVERSION_MODE_SHIFT) | (sensor_handler->config1 &(~CONVERSION_MODE_MASK));
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
-    if(rx != data_mask)
-        return false;
-    sensor_handler->config1 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
 }
 
 bool ads112c04_setOperationMode(ads112c04_handler_t *sensor_handler, ads112c04_operation_mode_t mode)
@@ -56,11 +53,7 @@ bool ads112c04_setOperationMode(ads112c04_handler_t *sensor_handler, ads112c04_o
     if(mode >= TOTAL_OPERATION_MODES)
         return false;
     uint8_t data_mask = (mode << OPERATION_MODE_SHIFT) | (sensor_handler->config1 &(~OPERATION_MODE_MASK));
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
-    if(rx != data_mask)
-        return false;
-    sensor_handler->config1 = data_mask;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
 }
 
 void ads112c04_powerDown(ads112c04_handler_t *sensor_handler)
@@ -88,11 +81,7 @@ bool ads112c04_setRefVoltage(ads112c04_handler_t *sensor_handler, ads112c04_ref_
     if(ref >= TOTAL_REFERENCE_VOLTAGES)
         return false;
     uint8_t data_mask = (ref << VOLTAGE_REFERENCE_SELECTION_SHIFT) | (sensor_handler->config1 &(~VOLTAGE_REFERENCE_SELECTION_MASK)); 
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
-    if(rx != data_mask)
-        return false;
-    sensor_handler->config1 = data_mask;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
 }
 
 bool ads112c04_setDataRate(ads112c04_handler_t *sensor_handler, ads112c04_data_rate_t rate)
@@ -100,11 +89,7 @@ bool ads112c04_setDataRate(ads112c04_handler_t *sensor_handler, ads112c04_data_r
     if(rate >= TOTAL_DATA_RATES)
         return false;
     uint8_t data_mask = (rate << DATA_RATE_SELECTION_SHIFT) | (sensor_handler->config1 &(~DATA_RATE_SELECTION_MASK)); 
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
-    if(rx != data_mask)
-        return false;
-    sensor_handler->config1 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_1_CM, data_mask);
 }
 
 static const uint8_t input_matrix_AINp_AINn_to_value[5][5] =  //ROW is POSITIVE , COLUMN is NEGATIVE// 
@@ -122,11 +107,7 @@ bool ads112c04_setInputs(ads112c04_handler_t *sensor_handler, ads112c04_input_t 
         return false;
     uint8_t data_mask = input_matrix_AINp_AINn_to_value[positive][negative] << INPUT_SELECTION_SHIFT;
     data_mask |= sensor_handler->config0 &(~INPUT_SELECTION_MASK);
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
-    if(rx != data_mask)
-        return false;
-    sensor_handler->config0 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
 }
 
 bool ads112c04_setMonitorMode(ads112c04_handler_t *sensor_handler, ads112c04_monitor_mode_t mode)
@@ -134,21 +115,13 @@ bool ads112c04_setMonitorMode(ads112c04_handler_t *sensor_handler, ads112c04_mon
     if( mode != MONITOR_VREFP_VREFN && mode != MONITOR_AVDD_AVSS)
         return false;
     uint8_t data_mask = (mode << INPUT_SELECTION_SHIFT) | (sensor_handler->config0 &(~INPUT_SELECTION_MASK));
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
-    if( rx != data_mask)
-        return false;
-    sensor_handler->config0 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
 }
 
 bool ads112c04_setCalibrationMode(ads112c04_handler_t *sensor_handler)
 {
     uint8_t data_mask = (0x0E << INPUT_SELECTION_SHIFT) | (sensor_handler->config0 &(~INPUT_SELECTION_MASK));
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
-    if( rx != data_mask)
-        return false;
-    sensor_handler->config0 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
 }
 
 bool ads112c04_setGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_gain_t gain)
@@ -163,11 +136,7 @@ bool ads112c04_setGain(ads112c04_handler_t *sensor_handler, ads112c04_sensor_gai
     if(gain_index == countof(array_of_gains)) //invalid value
         return false;
     uint8_t data_mask = (gain_index << GAIN_SELECTION_SHIFT) | (sensor_handler->config0 &(~GAIN_SELECTION_MASK));
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
-    if( rx != data_mask)
-        return false;
-    sensor_handler->config0 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
 }
 
 bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_t status)
@@ -175,11 +144,7 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
     if(status >= ALL_PGA_STATUS)
         return false;
     uint8_t data_mask = (status << PGA_BYPASS_SHIFT) | (sensor_handler->config0 &(~PGA_BYPASS_MASK));
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
-    if( rx != data_mask)
-        return false;
-    sensor_handler->config0 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
 }
 
 bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler)
@@ -205,11 +170,7 @@ bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current
     if(current_index == countof(array_of_currents)) //invalid value
         return false;
     uint8_t data_mask = (current_index << CURRENT_VALUE_SHIFT) | (sensor_handler->config2 &(~CURRENT_VALUE_MASK));
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_2_CM, data_mask);
-    if(rx != data_mask)
-        return false;
-    sensor_handler->config2 = rx;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_2_CM, data_mask);
 }
 
 bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_current_source_t source, ads112c04_current_output_t output)
@@ -222,11 +183,7 @@ bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_c
     else
         data_mask = (output << IDAC_2_OUTPUT_SHIFT) | (sensor_handler->config3 &(~IDAC_2_OUTPUT_MASK));
     
-    uint8_t rx = change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_3_CM, data_mask);
-    if(rx != data_mask)
-        return false;
-    sensor_handler->config3 = data_mask;
-    return true;
+    return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_3_CM, data_mask);
 }
 
 /* ==== [Private function definition] ===================================================== */
@@ -258,13 +215,19 @@ static void send_command(ads112c04_handler_t *sensor_handler, uint8_t command, u
  * @param sensor_handler struct ads112c04_handler_t for dependency injection.
  * @param config_register_x_cm  Is the mask applied to the command. The commands to write and read registers need specify the register.
  * @param register_value The value to write to the config register.
- * @return uint8_t 
+ * @return true The register changed
+ * @return false The register didn't change because the data was not written to the sensor.
  */
-static uint8_t change_config_reg_and_check(ads112c04_handler_t *sensor_handler, uint8_t config_register_x_cm, uint8_t register_value)
+static bool change_config_reg_and_check(ads112c04_handler_t *sensor_handler, uint8_t config_register_x_cm, uint8_t register_value)
 {
+    uint8_t *config_array[] = { &(sensor_handler->config0), &(sensor_handler->config1), &(sensor_handler->config2),
+                                &(sensor_handler->config3)};
     send_command(sensor_handler, COMMAND_WRITE_REGISTER, config_register_x_cm, register_value);
     send_command(sensor_handler, COMMAND_READ_REGISTER, config_register_x_cm, NO_REGISTER_VALUE);
     uint8_t rxBuffer[1];
     i2c_read(sensor_handler->address, rxBuffer, 1);
-    return rxBuffer[0];
+    if(rxBuffer[0] != register_value)
+        return false;
+    *config_array[config_register_x_cm >> CM_TO_NUM] = rxBuffer[0]; //use config_register_x_cm to know to what config to write.
+    return true;    
 }
