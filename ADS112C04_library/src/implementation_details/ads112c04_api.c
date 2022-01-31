@@ -147,7 +147,7 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
     return change_config_reg_and_check(sensor_handler, CONFIG_REGISTER_0_CM, data_mask);
 }
 
-bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler)
+bool ads112c04_isDataReady(ads112c04_handler_t *sensor_handler)
 {
    uint8_t txBuffer[1] = {COMMAND_READ_REGISTER | CONFIG_REGISTER_2_CM};
    i2c_write(sensor_handler->address, txBuffer, 1);

@@ -2,6 +2,7 @@
     "files.associations": {
         "ads112c04_core_defines.h": "c",
         "ads112c04_hal.h": "c",
-        "ads112c04_api.h": "c"
+        "ads112c04_api.h": "c",
+        "ads112c04_utilities.h": "c"
     }
 }

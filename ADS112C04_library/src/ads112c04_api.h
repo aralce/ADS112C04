@@ -176,7 +176,7 @@ bool ads112c04_setPGA(ads112c04_handler_t *sensor_handler, ads112c04_PGA_status_
  * @return true Data is ready
  * @return false Data is not ready
  */
-bool ads112c04_checkDataReady(ads112c04_handler_t *sensor_handler);
+bool ads112c04_isDataReady(ads112c04_handler_t *sensor_handler);
 
 /**
  * @brief The the current of both current sources.
@@ -193,7 +193,7 @@ bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current
  * @brief Set the current output to one of the entries, REFp or REFn
  *   Both current sources can be output to the same place.
  * 
- * @param sensor_handler struct ads112c04_handler_t for dependency injection.     
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection.
  * @param source current source
  * @param output pin to output the current source
  * @return true the selected current source changed its output.
@@ -201,6 +201,17 @@ bool ads112c04_setCurrent(ads112c04_handler_t *sensor_handler, ads112c04_current
  */
 bool ads112c04_setCurrentOutput(ads112c04_handler_t *sensor_handler, ads112c04_current_source_t source, ads112c04_current_output_t output);
 
+/**
+ * @brief Enable or disable the temperature sensor
+ *   When the temperature is active the input is disabled and no matters what input is selected the reading will do from temperature sensor.
+ *   If temperature is enabled the gain and PGA state are omitted.
+ *   Be sure to disable the temperature sensor to read data from ADC inputs.
+ * 
+ * @param sensor_handler struct ads112c04_handler_t for dependency injection. 
+ * @param state temperature sensor enabled or disabled.
+ * @return true the temperature sensor state successfully changed.
+ * @return false the temperature sensor didn't change because the state is invalid or the data was not written to sensor.
+ */
 bool ads112c04_setTemperatureSensor(ads112c04_handler_t *sensor_handler, ads112c04_temperature_sensor_state_t state);
 
 #endif

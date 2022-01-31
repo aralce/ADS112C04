@@ -48,7 +48,7 @@ void test_sensor_query_if_data_ready_the_data_is_ready (void)
     uint8_t data_mask = (0x01 << DATA_READY_SHIFT);
     sensor_checkRegister(CONFIG_REGISTER_2_CM, 0x01);
     //given
-    TEST_ASSERT_EQUAL(true, ads112c04_checkDataReady(&sensor_handler));
+    TEST_ASSERT_EQUAL(true, ads112c04_isDataReady(&sensor_handler));
 }
 
 //The sensor query if data is ready and data is not ready
@@ -59,7 +59,7 @@ void test_sensor_query_if_data_ready_the_data_is_not_ready (void)
     uint8_t data_mask = (0x00 << DATA_READY_SHIFT);
     sensor_checkRegister(CONFIG_REGISTER_2_CM, 0x00);
     //given
-    TEST_ASSERT_EQUAL(false, ads112c04_checkDataReady(&sensor_handler));    
+    TEST_ASSERT_EQUAL(false, ads112c04_isDataReady(&sensor_handler));    
 }
 
 //The sensor set the current for IDAC1_IDAC2 and succeed

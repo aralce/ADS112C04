@@ -24,7 +24,7 @@ void main(void)
     ads112c04_startConversion(&sensor_handler);   
     while(1){
         //To know when the data is ready we can set an interrupt or read on pin ~(DRDY) of the chip or just query it to the sensor. 
-        if ( ads112c04_checkDataReady(&sensor_handler) ){
+        if ( ads112c04_isDataReady(&sensor_handler) ){
             uint16_t data = ads112c04_readData(&sensor_handler);
             printf("Data: %d\r\n", data); //The data value is referenced to the reference voltage. Take care with the Full Scale Range.
         }else
