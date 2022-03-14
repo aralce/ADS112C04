@@ -23,7 +23,7 @@ The device can perform conversions at data rates up to 2000 samples-per-second (
 The main ADS112C04 driver is provided by Texas Instruments as an example code:  [code.zip](https://github.com/aralce/ADS112C04/files/7937650/sbam381.zip)  
 
 ## Proposed library
-This repository implements a library for the ADS112C04. The carateristics of the driver are:
+This repository implements a library for the ADS112C04. The characteristics of the driver are:
 - Full TDD developed.
 - Doxygen comments.
 The interface is declared on ads112c04_api.h.
